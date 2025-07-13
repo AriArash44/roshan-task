@@ -1,33 +1,49 @@
 import React from "react"
 import type { ReactElement, ReactNode } from "react"
+import Aside from "../common/Aside"
+
+const pages = [
+  { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/speech.svg" },
+  { label: "آرشیو", path: "archive", icon: "/images/archive.svg" },
+];
 
 interface MainLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 interface CompoundChildProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const Header: React.FC<CompoundChildProps> = ({ children }) => <>{children}</>;
 const Main: React.FC<CompoundChildProps> = ({ children }) => <>{children}</>;
 
 type MainLayoutComponent = React.FC<MainLayoutProps> & {
-    Header: typeof Header;
-    Main: typeof Main;
+  Header: typeof Header;
+  Main: typeof Main;
 };
 
 const MainLayout: MainLayoutComponent = ({ children }) => {
-    let header: ReactElement | undefined;
-    let main: ReactElement | undefined;
-    React.Children.forEach(children, child => {
-        if (React.isValidElement(child)) {
-            if (child.type === Header) header = child;
-            if (child.type === Main) main = child;
-        }
-    });
+  let header: ReactElement | undefined;
+  let main: ReactElement | undefined;
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      if (child.type === Header) header = child;
+      if (child.type === Main) main = child;
+    }
+  });
     return (
-      
+      <>
+        <Aside pages={pages} />
+        <div className="flex flex-col flex-1 justify-center items-center pl-[4rem]">
+          <header>
+            { header }
+          </header>
+          <main>
+            { main }
+          </main>
+        </div>
+      </>
     );
 };
 
