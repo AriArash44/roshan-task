@@ -1,6 +1,7 @@
 import React from "react"
 import type { ReactElement, ReactNode } from "react"
 import Aside from "../common/Aside"
+import UserMenu from "../common/UserMenu";
 
 const pages = [
   { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/icons/speech.svg" },
@@ -34,7 +35,7 @@ const MainLayout: MainLayoutComponent = ({ children }) => {
   });
     return (
       <>
-        <button className="absolute top-6 left-6">مهمان</button>
+        <UserMenu />
         <Aside pages={pages} />
         <div className="flex flex-col flex-1 justify-center items-center pl-[4rem]">
           <header>

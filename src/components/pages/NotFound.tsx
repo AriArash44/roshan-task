@@ -4,10 +4,10 @@ const NotFound = () => {
   return (
     <MainLayout>
       <MainLayout.Header>
-        header
+        <></>
       </MainLayout.Header>
       <MainLayout.Main>
-        main
+        <></>
       </MainLayout.Main>
     </MainLayout>
   )
