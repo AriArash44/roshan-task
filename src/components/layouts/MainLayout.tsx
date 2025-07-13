@@ -3,8 +3,8 @@ import type { ReactElement, ReactNode } from "react"
 import Aside from "../common/Aside"
 
 const pages = [
-  { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/speech.svg" },
-  { label: "آرشیو", path: "archive", icon: "/images/archive.svg" },
+  { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/icons/speech.svg" },
+  { label: "آرشیو", path: "archive", icon: "/images/icons/archive.svg" },
 ];
 
 interface MainLayoutProps {
@@ -34,6 +34,7 @@ const MainLayout: MainLayoutComponent = ({ children }) => {
   });
     return (
       <>
+        <button className="absolute top-6 left-6">مهمان</button>
         <Aside pages={pages} />
         <div className="flex flex-col flex-1 justify-center items-center pl-[4rem]">
           <header>

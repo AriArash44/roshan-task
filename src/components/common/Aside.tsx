@@ -11,11 +11,11 @@ const Aside = ({ pages }: AsideProps) => {
   return (
     <aside className="relative h-screen w-auto">
       <img
-        src="/images/aside.png"
+        src="/images/backgrounds/aside.png"
         alt=""
         className="h-full w-auto object-contain"
       />
-      <nav className="absolute inset-0 p-4">
+      <nav className="absolute inset-0 p-1">
         {pages.map(({ label, path, icon }) => {
           const to = `/${path}`;
           const isActive = pathname === to;
@@ -23,12 +23,14 @@ const Aside = ({ pages }: AsideProps) => {
             <Link
               key={path}
               to={to}
-              className={`flex items-center mb-4 hover:underline ${
-                isActive ? "text-blue-500 font-bold" : "text-white"
+              className={`flex items-center mb-4 hover:underline w-[70%] ${
+                isActive ? "bg-gray-100 font-bold" : "text-white"
               }`}
             >
-              <img src={icon} alt="" className="w-5 h-5 mr-2" />
-              {label}
+              <img src={icon} alt="" className="h-5 mr-2 w-[20%]" />
+              <span className="flex-1 text-[clamp(0.6rem,2.5vw,0.9rem)]">
+                {label}
+              </span>
             </Link>
           );
         })}
