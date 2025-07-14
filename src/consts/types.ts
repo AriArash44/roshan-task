@@ -3,3 +3,5 @@ export interface PageConfig {
   path: string;
   icon: string;
 }
+
+export type themeColor = "red" | "green" | "blue";

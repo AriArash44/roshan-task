@@ -33,20 +33,20 @@ const MainLayout: MainLayoutComponent = ({ children }) => {
       if (child.type === Main) main = child;
     }
   });
-    return (
-      <>
-        <UserMenu />
-        <Aside pages={pages} />
-        <div className="flex flex-col flex-1 justify-center items-center pl-[4rem]">
-          <header>
-            { header }
-          </header>
-          <main>
-            { main }
-          </main>
-        </div>
-      </>
-    );
+  return (
+    <>
+      <UserMenu />
+      <Aside pages={pages} />
+      <div className="flex flex-col flex-1 gap-8 justify-center items-center pl-[4rem]">
+        <header>
+          { header }
+        </header>
+        <main>
+          { main }
+        </main>
+      </div>
+    </>
+  );
 };
 
 MainLayout.Header = Header;
