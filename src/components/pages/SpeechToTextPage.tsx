@@ -1,5 +1,6 @@
 import MainLayout from "../layouts/MainLayout";
 import Tabs from "../common/Tabs";
+import DropdownMenu from "../common/DropDown";
 
 const SpeechToTextPage = () => {
   return (
@@ -20,7 +21,12 @@ const SpeechToTextPage = () => {
             <div className="w-150 h-80"></div>
           </Tabs.Tab>
         </Tabs>
-        
+        <div className="flex gap-4 items-center absolute mt-3 left-0">
+          <p className="font-light text-neutral-200">زبان گفتار:</p>
+          <DropdownMenu title="فارسی" options={[{label: "انگلیسی"}]} changeTitleOnSelect={true} 
+          swapLabelsOnSelect={true} className="pt-1.5 pb-1.5"/>
+        </div>
+        <br /><br />
       </MainLayout.Main>
     </MainLayout>
   )

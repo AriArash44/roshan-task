@@ -1,7 +1,7 @@
 import React from "react"
 import type { ReactElement, ReactNode } from "react"
 import Aside from "../common/Aside"
-import UserMenu from "../common/UserMenu";
+import DropdownMenu from "../common/DropDown";
 
 const pages = [
   { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/icons/speech.svg" },
@@ -35,13 +35,14 @@ const MainLayout: MainLayoutComponent = ({ children }) => {
   });
   return (
     <>
-      <UserMenu />
+      <DropdownMenu iconName="user" title="مهمان" options={[{label: "خروج", iconName: "logout"}]}
+      changeTitleOnSelect={false} className="absolute top-8 left-8 border-2"/>
       <Aside pages={pages} />
       <div className="flex flex-col flex-1 gap-8 justify-center items-center pl-[4rem]">
         <header>
           { header }
         </header>
-        <main>
+        <main className="relative">
           { main }
         </main>
       </div>
