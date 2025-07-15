@@ -11,8 +11,7 @@ import { showToast } from '../../utils/showToastHandler';
 const SpeechToTextPage = () => {
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
   const { loading, error, data, postData } = usePost<MediaInput, TranscriptionOutput>({
-    url: `${import.meta.env.VITE_BASE_URL}/transcribe_files/`,
-    headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
+    url: "/transcribe_files/", headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
   });
   const { uploading, errorUploading, fileUrl } = useBytescaleUploader(audio);
   const scale = useMemo(() => 1 + micLevel * 0.5, [micLevel]);

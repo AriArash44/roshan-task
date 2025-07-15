@@ -1,16 +1,17 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { UsePostOptions, UsePostReturn } from "../consts/types";
 
 export function usePost<T = unknown, R = unknown>(options: UsePostOptions<T>): UsePostReturn<R> {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<R | null>(null);
+  const useMock = useMemo(() => import.meta.env.VITE_USE_MOCK === 'true', []);
   const postData = useCallback(async (overrideBody?: T): Promise<void> => {
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const res = await fetch(options.url, {
+      const res = await fetch((useMock ? import.meta.env.VITE_MOCK_URL : import.meta.env.VITE_BASE_URL).concat(options.url), {
         method: "POST",
         headers: {
           ...(options.headers || {}),
