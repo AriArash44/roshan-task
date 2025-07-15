@@ -4,4 +4,11 @@ export interface PageConfig {
   icon: string;
 }
 
+export type UseAudioRecorderReturn = {
+  recording: boolean;
+  audioURL: string | null;
+  startRecording: () => Promise<void>;
+  stopRecording: () => void;
+};
+
 export type themeColor = "red" | "green" | "blue";
