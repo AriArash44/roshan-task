@@ -1,20 +1,13 @@
 import React from "react"
-import type { ReactElement, ReactNode } from "react"
+import type { ReactElement } from "react"
+import type { MainLayoutProps, CompoundChildProps } from "../../consts/types"
 import Aside from "../common/Aside"
-import DropdownMenu from "../common/DropDown";
+import DropdownMenu from "../common/DropDown"
 
 const pages = [
   { label: "تبدیل گفتار", path: "speech-to-text", icon: "/images/icons/speech.svg" },
   { label: "آرشیو", path: "archive", icon: "/images/icons/archive.svg" },
 ];
-
-interface MainLayoutProps {
-  children: ReactNode;
-}
-
-interface CompoundChildProps {
-  children: ReactNode;
-}
 
 const Header: React.FC<CompoundChildProps> = ({ children }) => <>{children}</>;
 const Main: React.FC<CompoundChildProps> = ({ children }) => <>{children}</>;

@@ -1,21 +1,7 @@
 import { useState, useCallback } from "react";
+import type { UsePostOptions, UsePostReturn } from "../consts/types";
 
-interface UsePostOptions<T> {
-  url: string;
-  headers?: Record<string, string>;
-  body?: T;
-}
-
-interface UsePostReturn<R> {
-  loading: boolean;
-  error: string | null;
-  data: R | null;
-  postData: (body?: any) => Promise<void>;
-}
-
-export function usePost<T = unknown, R = unknown>(
-  options: UsePostOptions<T>
-): UsePostReturn<R> {
+export function usePost<T = unknown, R = unknown>(options: UsePostOptions<T>): UsePostReturn<R> {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<R | null>(null);
@@ -27,8 +13,9 @@ export function usePost<T = unknown, R = unknown>(
       const res = await fetch(options.url, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           ...(options.headers || {}),
+          ...(Object.keys(options.headers || {}).includes("Content-Type")
+            ? {} : { "Content-Type": "application/json" }),
         },
         body: JSON.stringify(overrideBody ?? options.body),
       });

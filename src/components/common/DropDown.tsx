@@ -1,19 +1,6 @@
 import { useState } from "react";
 import { getIconPath } from "../../utils/getIconPath";
-
-export interface DropdownOption {
-  label: string;
-  iconName?: string;
-}
-
-export interface DropdownMenuProps {
-  title: string;
-  iconName?: string;
-  options?: DropdownOption[];
-  changeTitleOnSelect?: boolean;
-  swapLabelsOnSelect?: boolean;
-  className?: string;
-}
+import type { DropdownOption, DropdownMenuProps } from "../../consts/types";
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [], 
     changeTitleOnSelect = false, swapLabelsOnSelect = false, className = ""}) => {

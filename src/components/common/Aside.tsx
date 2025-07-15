@@ -1,9 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import type { PageConfig } from "../../consts/types";
-
-interface AsideProps {
-  pages: PageConfig[];
-}
+import type { AsideProps } from "../../consts/types";
 
 const Aside = ({ pages }: AsideProps) => {
   const { pathname } = useLocation();

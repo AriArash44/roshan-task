@@ -1,21 +1,7 @@
 import React, {useState} from 'react';
-import type {ReactNode, ReactElement, FC} from 'react';
-import type {themeColor} from "../../consts/types";
+import type { FC } from 'react';
+import type { TabElement, TabProps, TabsProps } from "../../consts/types";
 import { getIconPath, getWhiteIconPath } from '../../utils/getIconPath';
-
-interface TabProps {
-  icon: string;
-  title: string;
-  children: ReactNode;
-  theme: themeColor;
-}
-
-type TabElement = ReactElement<TabProps>;
-
-interface TabsProps {
-  children: TabElement | TabElement[];
-  defaultIndex?: number;
-}
 
 const Tabs: FC<TabsProps> & { Tab: FC<TabProps> } = ({children, defaultIndex = 0}) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
