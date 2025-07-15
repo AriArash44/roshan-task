@@ -6,6 +6,7 @@ import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 import { usePost } from "../../hooks/usePost";
 import { useBytescaleUploader } from '../../hooks/useBytescaleUploader';
 import type { TranscriptionOutput, MediaInput } from "../../consts/types";
+import { showToast } from '../../utils/showToastHandler';
 
 const SpeechToTextPage = () => {
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
@@ -34,6 +35,11 @@ const SpeechToTextPage = () => {
       }
     })();
   }, [fileUrl]);
+  useEffect(() => {
+    if(error || errorUploading){
+      showToast(error ?? errorUploading!);
+    }
+  }, [error, errorUploading]);
 
   return (
     <MainLayout>
