@@ -8,6 +8,7 @@ import { usePost } from "../../hooks/usePost";
 import { useBytescaleUploader } from '../../hooks/useBytescaleUploader';
 import type { TranscriptionOutput, MediaInput } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
+import AudioPlayer from '../common/AudioPlayer';
 
 const SpeechToTextPage = () => {
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
@@ -66,17 +67,16 @@ const SpeechToTextPage = () => {
                 ) : (
                   <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='green'>
                     <TabsWithMenu.Tab title='متن ساده' icon='text'>
-                      <></>
+                      <div className="absolute bottom-0 w-full mb-5">
+                        <AudioPlayer src={fileUrl!} theme="green"/>
+                      </div>
                     </TabsWithMenu.Tab>
                     <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
-                      <></>
+                      <div className="absolute bottom-0 w-full">
+                        <AudioPlayer src={fileUrl!} theme="green"/>
+                      </div>
                     </TabsWithMenu.Tab>
                   </TabsWithMenu>
-                  // <AudioPlayer
-                  //   src={fileUrl!}
-                  //   autoPlay={false}
-                  //   volume={0.8}
-                  // />
                 )
               ) : (
                 <span className="loader"></span>

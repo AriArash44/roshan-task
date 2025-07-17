@@ -101,4 +101,17 @@ export interface TranscriptionItem {
 }
 
 export type TranscriptionOutput = TranscriptionItem[];
+
+export interface RangeSliderProps {
+  value: number;
+  max: number;
+  step?: number;
+  onChange: (val: number[]) => void;
+  theme: themeColor;
+  hasThumb?: boolean; 
+}
  
+export interface AudioPlayerProps {
+  src: string;
+  theme: themeColor;
+}
