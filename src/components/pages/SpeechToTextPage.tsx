@@ -13,7 +13,8 @@ import RowsTable from '../common/Rows';
 
 const SpeechToTextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [ uploadedAudio, setuploadedAudio ] = useState<Blob | null>(null);
+  const [ uploadedAudio, setUploadedAudio ] = useState<Blob | null>(null);
+  const [ directUrlAudio, setDirectUrlAudio ] = useState<string | null>(null);
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
   const { loading, error, data, postData } = usePost<MediaInput, TranscriptionOutput>({
     url: "/transcribe_files/", headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
@@ -34,7 +35,7 @@ const SpeechToTextPage = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setuploadedAudio(file);
+      setUploadedAudio(file);
     }
   };
 
@@ -130,7 +131,38 @@ const SpeechToTextPage = () => {
             </div>
           </Tabs.Tab>
           <Tabs.Tab title="لینک" icon="chain" theme="red">
-            <div className="w-150 h-80"></div>
+            <div className="flex flex-col justify-center items-center w-150 h-80">
+              {!loading && !uploading ? (
+                !data ? (
+                  <>
+                    <div className='flex gap-2 items-center rounded-full px-4 py-2 border-1 border-red' dir="ltr">
+                      <button onClick={async() => await postData({ media_urls: [directUrlAudio] })} className="bg-red rounded-full w-9 h-9 cursor-pointer transition-transform duration-30">
+                        <img src="/images/icons/chain-white.svg" alt="upload" className="m-auto w-5 h-5" />
+                      </button>
+                      <input type="url" className='outline-0' placeholder='example.com/sample.mp3' onChange={(e) => setDirectUrlAudio(e.target.value)}/>
+                    </div>
+                    <p className="text-neutral-200 font-light text-center mt-2">نشانی اینترنتی فایل حاوی گفتار (صوتی/تصویری) را وارد<br />و دکمه را فشار دهید</p>
+                  </>
+                ) : (
+                  <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='red'>
+                    <TabsWithMenu.Tab title='متن ساده' icon='text'>
+                      <p className='font-light'>{data[0].segments.reduce((acc, cur) => acc.concat(cur["text"] + " "), "")}</p>
+                      <div className="absolute bottom-0 w-[94%] mb-5">
+                        <AudioPlayer src={directUrlAudio!} theme="red"/>
+                      </div>
+                    </TabsWithMenu.Tab>
+                    <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
+                      <RowsTable texts={data[0].segments} />
+                      <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
+                        <AudioPlayer src={directUrlAudio!} theme="red"/>
+                      </div>
+                    </TabsWithMenu.Tab>
+                  </TabsWithMenu>
+                )
+              ) : (
+                <span className="loader"></span>
+              )}
+            </div>
           </Tabs.Tab>
         </Tabs>
         <div className="flex gap-4 items-center absolute mt-3 left-0">
