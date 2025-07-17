@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import MainLayout from "../layouts/MainLayout";
 import Tabs from "../common/Tabs";
+import TabsWithMenu from '../common/TabsWithMenu';
 import DropdownMenu from "../common/DropDown";
 import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 import { usePost } from "../../hooks/usePost";
@@ -63,7 +64,19 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای شروع به صحبت، دکمه را فشار دهید<br />متن پیاده شده آن، در اینجا ظاهر شود</p>
                   </>
                 ) : (
-                  <>{audio && <audio src={fileUrl!} controls className="mt-4" />}</>
+                  <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='green'>
+                    <TabsWithMenu.Tab title='متن ساده' icon='text'>
+                      <></>
+                    </TabsWithMenu.Tab>
+                    <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
+                      <></>
+                    </TabsWithMenu.Tab>
+                  </TabsWithMenu>
+                  // <AudioPlayer
+                  //   src={fileUrl!}
+                  //   autoPlay={false}
+                  //   volume={0.8}
+                  // />
                 )
               ) : (
                 <span className="loader"></span>

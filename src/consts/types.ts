@@ -30,7 +30,7 @@ export interface TabProps {
   icon: string;
   title: string;
   children: ReactNode;
-  theme: themeColor;
+  theme?: themeColor;
 }
 
 export type TabElement = ReactElement<TabProps>;
@@ -38,6 +38,15 @@ export type TabElement = ReactElement<TabProps>;
 export interface TabsProps {
   children: TabElement | TabElement[];
   defaultIndex?: number;
+}
+
+export interface TabsWithMenuProps {
+  children: TabElement | TabElement[];
+  defaultIndex?: number;
+  hasDownload: boolean;
+  hasCopy: boolean;
+  hasTryAgain: boolean;
+  theme: themeColor;
 }
 
 export interface MainLayoutProps {

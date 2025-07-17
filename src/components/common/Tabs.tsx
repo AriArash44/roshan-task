@@ -17,7 +17,7 @@ const Tabs: FC<TabsProps> & { Tab: FC<TabProps> } = ({children, defaultIndex = 0
           </button>
         ))}
       </div>
-      <div className={`border border-${tabs[activeIndex].props.theme} rounded-3xl 
+      <div className={`border border-${tabs[activeIndex].props.theme} rounded-3xl p-5 relative
       ${activeIndex === 0 ? "rounded-tr-none" : ""} shadow-md`}>
         {tabs[activeIndex]?.props.children}
       </div>
