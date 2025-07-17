@@ -115,3 +115,13 @@ export interface AudioPlayerProps {
   src: string;
   theme: themeColor;
 }
+
+export interface RowProps {
+  start: string;
+  end: string;
+  text: string;
+}
+
+export interface RowsProps {
+  texts: RowProps[];
+}

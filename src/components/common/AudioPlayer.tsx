@@ -3,6 +3,7 @@ import type { FC } from "react";
 import { getIconPath } from "../../utils/getIconPath";
 import RangeSlider from "./RangeSlider";
 import type { AudioPlayerProps } from "../../consts/types";
+import { secToTime } from "../../utils/formatTime";
 
 const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -51,7 +52,7 @@ const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
   }, []);
 
   return (
-    <div className="w-[78%] mr-[8%] px-3 py-1.5 bg-neutral-500 rounded-xl" dir="ltr">
+    <div className="w-[80%] m-auto px-3 py-1.5 bg-neutral-500 rounded-xl" dir="ltr">
       <audio ref={audioRef} src={src} preload="metadata" />
       <div className="flex items-center gap-4">
         <button onClick={togglePlay} className="cursor-pointer">
@@ -59,6 +60,7 @@ const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
         </button>
         <RangeSlider value={currentTime} max={duration || 0} onChange={onSeek} theme={theme} />
         <img src={volumeIcon} alt="volume" className="h-4 w-4" />
+        <p className="fanum">{secToTime(currentTime)}</p>
         <div className="flex-1/5">
           <RangeSlider value={volume} max={1} step={0.01} onChange={onVolumeChange} theme={theme} hasThumb={false}/>
         </div>

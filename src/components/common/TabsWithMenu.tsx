@@ -8,8 +8,8 @@ const TabsWithMenu: FC<TabsWithMenuProps> & { Tab: FC<TabProps> } =
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   const tabs = React.Children.toArray(children) as TabElement[];
   return (
-    <div className='w-full'>
-      <div className="flex justify-between border-b-1 [border-color:hsla(0,0%,0%,0.3)] absolute top-0 w-[94%] mt-2">
+    <div className='w-full h-full overflow-scroll'>
+      <div className="flex justify-between border-b-1 bg-white [border-color:hsla(0,0%,0%,0.3)] absolute top-0 w-[94%] mt-2">
         <div className="flex gap-6">
           {tabs.map((tab, idx) => (
             <button key={idx} className={`flex items-center gap-2 px-2 py-5 cursor-pointer text-neutral-black
@@ -32,7 +32,7 @@ const TabsWithMenu: FC<TabsWithMenuProps> & { Tab: FC<TabProps> } =
           </button>}
         </div>
       </div>
-      <div>
+      <div className='mt-18 mb-12'>
         {tabs[activeIndex]?.props.children}
       </div>
     </div>

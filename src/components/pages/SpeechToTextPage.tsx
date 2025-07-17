@@ -9,6 +9,7 @@ import { useBytescaleUploader } from '../../hooks/useBytescaleUploader';
 import type { TranscriptionOutput, MediaInput } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
 import AudioPlayer from '../common/AudioPlayer';
+import RowsTable from '../common/Rows';
 
 const SpeechToTextPage = () => {
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
@@ -67,12 +68,14 @@ const SpeechToTextPage = () => {
                 ) : (
                   <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='green'>
                     <TabsWithMenu.Tab title='متن ساده' icon='text'>
-                      <div className="absolute bottom-0 w-full mb-5">
+                      <p className='font-light'>{data[0].segments.reduce((acc, cur) => acc.concat(cur["text"] + " "), "")}</p>
+                      <div className="absolute bottom-0 w-[94%] mb-5">
                         <AudioPlayer src={fileUrl!} theme="green"/>
                       </div>
                     </TabsWithMenu.Tab>
                     <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
-                      <div className="absolute bottom-0 w-full">
+                      <RowsTable texts={data[0].segments} />
+                      <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
                         <AudioPlayer src={fileUrl!} theme="green"/>
                       </div>
                     </TabsWithMenu.Tab>
