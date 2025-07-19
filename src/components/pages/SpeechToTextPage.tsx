@@ -11,11 +11,14 @@ import type { TranscriptionOutput, TranscriptionTabsProps, MediaInput } from "..
 import { showToast } from '../../utils/showToastHandler';
 import AudioPlayer from '../common/AudioPlayer';
 import RowsTable from '../common/Rows';
+import { handleDownload } from '../../utils/downloadUrl';
+import { handleCopy } from '../../utils/copyText';
 
-const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments}) => {
+const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments, tryAgain}) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
   return (
-    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} >
+    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} onTryAgain={() => {tryAgain()}}
+    onDownload={() => {handleDownload(audioSrc)}} onCopy={() => {handleCopy(fullText); showToast("text copied!")}}>
       <TabsWithMenu.Tab title="متن ساده" icon="text">
         <p className="font-light">{fullText}</p>
         <div className="absolute bottom-0 w-[94%] mb-5">
@@ -37,11 +40,11 @@ const SpeechToTextPage = () => {
   const [ uploadedAudio, setUploadedAudio ] = useState<Blob | null>(null);
   const [ directUrlAudio, setDirectUrlAudio ] = useState<string | null>(null);
   const [selectedLang, setSelectedLang] = useState<string>("fa");
-  const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
-  const { loading, error, data, postData } = usePost<MediaInput, TranscriptionOutput>({
+  const { recording, audio, micLevel, startRecording, stopRecording, reset: resetAudioRecorder } = useAudioRecorder();
+  const { loading, error, data, postData, reset: resetPost } = usePost<MediaInput, TranscriptionOutput>({
     url: `/transcribe_files/?lang=${selectedLang}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
   });
-  const { uploading, errorUploading, fileUrl } = useBytescaleUploader(audio || uploadedAudio);
+  const { uploading, errorUploading, fileUrl, reset: reseyBytescaleUploader } = useBytescaleUploader(audio || uploadedAudio);
   const scale = useMemo(() => 1 + micLevel * 0.5, [micLevel]);
   const icon = useMemo(() => (recording ? '/images/icons/pause.svg' : '/images/icons/mic-white.svg'),[recording]);
   const handleToggleRecording = async () => {
@@ -60,6 +63,14 @@ const SpeechToTextPage = () => {
       setUploadedAudio(file);
     }
   };
+
+  const resetTabs = () => {
+    resetPost();
+    setUploadedAudio(null); 
+    setDirectUrlAudio(null);
+    resetAudioRecorder();
+    reseyBytescaleUploader()
+  }
 
   useEffect(() => {
     if (!fileUrl) return;
@@ -100,7 +111,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای شروع به صحبت، دکمه را فشار دهید<br />متن پیاده شده آن، در اینجا ظاهر شود</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="green" audioSrc={fileUrl!} segments={data[0].segments} />
+                  <TranscriptionTabs theme="green" audioSrc={fileUrl!} segments={data[0].segments} tryAgain={resetTabs}/>
                 )
               ) : (
                 <span className="loader"></span>
@@ -119,7 +130,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای بارگذاری فایل گفتاری (صوتی/تصویری)، دکمه را فشار دهید<br/>متن پیاده شده آن، در اینجا ظاهر می شود</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="blue" audioSrc={fileUrl!} segments={data[0].segments} />
+                  <TranscriptionTabs theme="blue" audioSrc={fileUrl!} segments={data[0].segments} tryAgain={resetTabs} />
                 )
               ) : (
                 <span className="loader"></span>
@@ -132,7 +143,7 @@ const SpeechToTextPage = () => {
                 !data ? (
                   <>
                     <div className='flex gap-2 items-center rounded-full px-4 py-2 border-1 border-red' dir="ltr">
-                      <button onClick={async() => await postData({ media_urls: [directUrlAudio] })} className="bg-red rounded-full w-9 h-9 cursor-pointer transition-transform duration-30">
+                      <button onClick={async() => await postData({ media_urls: [directUrlAudio] }) } className="bg-red rounded-full w-9 h-9 cursor-pointer transition-transform duration-30">
                         <img src="/images/icons/chain-white.svg" alt="upload" className="m-auto w-5 h-5" />
                       </button>
                       <input type="url" className='outline-0' placeholder='example.com/sample.mp3' onChange={(e) => setDirectUrlAudio(e.target.value)}/>
@@ -140,7 +151,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">نشانی اینترنتی فایل حاوی گفتار (صوتی/تصویری) را وارد<br />و دکمه را فشار دهید</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="red" audioSrc={fileUrl!} segments={data[0].segments} />
+                  <TranscriptionTabs theme="red" audioSrc={directUrlAudio!} segments={data[0].segments} tryAgain={resetTabs}/>
                 )
               ) : (
                 <span className="loader"></span>

@@ -4,7 +4,7 @@ import type { TabElement, TabProps, TabsWithMenuProps } from "../../consts/types
 import { getIconPath, getBlackIconPath } from '../../utils/getIconPath';
 
 const TabsWithMenu: FC<TabsWithMenuProps> & { Tab: FC<TabProps> } = 
-  ({children, defaultIndex = 0, hasDownload, hasCopy, hasTryAgain, theme}) => {
+  ({children, defaultIndex = 0, hasDownload, hasCopy, hasTryAgain, theme, onDownload, onCopy, onTryAgain}) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   const tabs = React.Children.toArray(children) as TabElement[];
   return (
@@ -20,13 +20,13 @@ const TabsWithMenu: FC<TabsWithMenuProps> & { Tab: FC<TabProps> } =
           ))}
         </div>
         <div className='flex items-center gap-4'>
-          {hasDownload && <button onClick={() => {}}>
+          {hasDownload && <button onClick={() => onDownload?.()} className='cursor-pointer'>
             <img src="/images/icons/download.svg" alt="download" />
           </button>}
-          {hasCopy && <button onClick={() => {}}>
+          {hasCopy && <button onClick={() => onCopy?.()} className='cursor-pointer'>
             <img src="/images/icons/copy.svg" alt="copy" />
           </button>}
-          {hasTryAgain && <button onClick={() => {}} className={`bg-${theme} rounded-full px-3 py-1.5 text-neutral-white cursor-pointer`}>
+          {hasTryAgain && <button onClick={() => onTryAgain?.()} className={`bg-${theme} rounded-full px-3 py-1.5 text-neutral-white cursor-pointer`}>
             <img src="/images/icons/refresh.svg" alt="try again" className='inline ml-2' />
             <span>شروع دوباره</span>
           </button>}

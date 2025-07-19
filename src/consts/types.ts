@@ -93,6 +93,9 @@ export interface TabsWithMenuProps {
   hasCopy: boolean;
   hasTryAgain: boolean;
   theme: themeColor;
+  onDownload?: () => void;
+  onCopy?: () => void;
+  onTryAgain?: () => void;
 }
 
 export type themeColor = "red" | "green" | "blue";
@@ -110,6 +113,7 @@ export interface TranscriptionTabsProps {
   theme: themeColor;
   audioSrc: string;
   segments: Segment[];
+  tryAgain: () => void;
 }
 
 export type UseAudioRecorderReturn = {
@@ -131,4 +135,5 @@ export interface UsePostReturn<R> {
   error: string | null;
   data: R | null;
   postData: (body?: any) => Promise<void>;
+  reset: () => void;
 }

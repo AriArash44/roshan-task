@@ -61,5 +61,11 @@ export function useAudioRecorder() {
     };
   }, []);
 
-  return { recording, audio, micLevel, startRecording, stopRecording };
+  const reset = () => {
+    if (recording) stopRecording();
+    setAudio(null);
+    setMicLevel(0);
+  };
+
+  return { recording, audio, micLevel, startRecording, stopRecording, reset };
 }

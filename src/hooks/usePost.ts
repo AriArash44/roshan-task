@@ -31,5 +31,11 @@ export function usePost<T = unknown, R = unknown>(options: UsePostOptions<T>): U
     }
   }, [options]);
   
-  return { loading, error, data, postData };
+  function reset() {
+    setLoading(false);
+    setError(null);
+    setData(null);
+  }
+
+  return { loading, error, data, postData, reset };
 }

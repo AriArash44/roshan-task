@@ -26,5 +26,11 @@ export function useBytescaleUploader(file: Blob | null) {
     uploadFile();
   }, [file]);
 
-  return { uploading, errorUploading, fileUrl };
+  const reset = () => {
+    setUploading(false);
+    setErrorUploading(null);
+    setFileUrl(null);
+  }
+
+  return { uploading, errorUploading, fileUrl, reset };
 }
