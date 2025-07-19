@@ -75,3 +75,101 @@ export const persianText = [
         }
     }
 ]
+
+export const englishText = [
+    {
+        "media_url": "https://myniloomusic.musicmelllnet.com/Niloo/Muse/Muse%20-%20Starlight.mp3",
+        "duration": "0:03:58.000",
+        "segments": [
+            {
+                "start": "0:00:00.000",
+                "end":   "0:00:10.000",
+                "text":  "Far away, this ship is taking me far away"
+            },
+            {
+                "start": "0:00:10.000",
+                "end":   "0:00:18.000",
+                "text":  "Far away from the memories of the people who care if I live or die"
+            },
+            {
+                "start": "0:00:18.000",
+                "end":   "0:00:28.000",
+                "text":  "Starlight, I will be chasing a starlight until the end of my life"
+            },
+            {
+                "start": "0:00:28.000",
+                "end":   "0:00:34.000",
+                "text":  "I don't know if it's worth it anymore"
+            },
+            {
+                "start": "0:00:34.000",
+                "end":   "0:00:44.000",
+                "text":  "Hold you in my arms, I just wanted to hold you in my arms"
+            },
+            {
+                "start": "0:00:44.000",
+                "end":   "0:00:52.000",
+                "text":  "My life, you electrify my life"
+            },
+            {
+                "start": "0:00:52.000",
+                "end":   "0:01:04.000",
+                "text":  "Let's conspire to ignite all the souls that would die just to feel alive"
+            },
+            {
+                "start": "0:01:04.000",
+                "end":   "0:01:12.000",
+                "text":  "But I can't find the start, maybe I am out of my mind"
+            },
+            {
+                "start": "0:01:12.000",
+                "end":   "0:01:22.000",
+                "text":  "Control, I feel like I'm sinking into the sea of endless nights"
+            },
+            {
+                "start": "0:01:22.000",
+                "end":   "0:01:28.000",
+                "text":  "Just waiting for a sign of life"
+            },
+            {
+                "start": "0:01:28.000",
+                "end":   "0:01:36.000",
+                "text":  "If I open my eyes, would you hold my gaze? Would you even notice?"
+            },
+            {
+                "start": "0:01:36.000",
+                "end":   "0:01:44.000",
+                "text":  "No, I can't take this anymore"
+            },
+            {
+                "start": "0:01:44.000",
+                "end":   "0:01:54.000",
+                "text":  "Hold you in my arms, I just wanted to hold you in my arms"
+            },
+            {
+                "start": "0:01:54.000",
+                "end":   "0:02:04.000",
+                "text":  "I just wanted to hold you in my arms"
+            },
+            {
+                "start": "0:02:04.000",
+                "end":   "0:02:16.000",
+                "text":  "'Cause you're a starlight, you fill my heart with light"
+            },
+            {
+                "start": "0:02:16.000",
+                "end":   "0:02:28.000",
+                "text":  "I'll never be lost in the dark, dark—just show your light and I'll follow you"
+            },
+            {
+                "start": "0:02:28.000",
+                "end":   "0:02:40.000",
+                "text":  "Hold you in my arms, I just wanted to hold you in my arms"
+            }
+        ],
+        "stats": {
+            "words": 155,
+            "known_words": 155
+        }
+    }
+]

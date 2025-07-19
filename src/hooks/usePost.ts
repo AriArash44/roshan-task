@@ -5,13 +5,14 @@ export function usePost<T = unknown, R = unknown>(options: UsePostOptions<T>): U
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<R | null>(null);
-  const useMock = useMemo(() => import.meta.env.VITE_USE_MOCK === 'true', []);
+  const mockEnable = useMemo(() => import.meta.env.VITE_USE_MOCK === 'true', []);
+
   const postData = useCallback(async (overrideBody?: T): Promise<void> => {
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const res = await fetch((useMock ? import.meta.env.VITE_MOCK_URL : import.meta.env.VITE_BASE_URL).concat(options.url), {
+      const res = await fetch((mockEnable ? import.meta.env.VITE_MOCK_URL : import.meta.env.VITE_BASE_URL).concat(options.url), {
         method: "POST",
         headers: {
           ...(options.headers || {}),
@@ -29,5 +30,6 @@ export function usePost<T = unknown, R = unknown>(options: UsePostOptions<T>): U
       setLoading(false);
     }
   }, [options]);
+  
   return { loading, error, data, postData };
 }

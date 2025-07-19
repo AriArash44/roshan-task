@@ -3,7 +3,7 @@ import { getIconPath } from "../../utils/getIconPath";
 import type { DropdownOption, DropdownMenuProps } from "../../consts/types";
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [], 
-    changeTitleOnSelect = false, swapLabelsOnSelect = false, className = ""}) => {
+    changeTitleOnSelect = false, swapLabelsOnSelect = false, className = "", onSelect }) => {
   const [open, setOpen] = useState(false);
   const [currentTitle, setCurrentTitle] = useState(title);
   const [optionsState, setOptionsState] = useState<DropdownOption[]>(options);
@@ -20,6 +20,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [
         )
       );
     }
+    onSelect?.(opt.label);
     setOpen(false);
   }
   return (

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FC } from 'react';
 import MainLayout from "../layouts/MainLayout";
 import Tabs from "../common/Tabs";
 import TabsWithMenu from '../common/TabsWithMenu';
@@ -6,18 +7,39 @@ import DropdownMenu from "../common/DropDown";
 import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 import { usePost } from "../../hooks/usePost";
 import { useBytescaleUploader } from '../../hooks/useBytescaleUploader';
-import type { TranscriptionOutput, MediaInput } from "../../consts/types";
+import type { TranscriptionOutput, TranscriptionTabsProps, MediaInput } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
 import AudioPlayer from '../common/AudioPlayer';
 import RowsTable from '../common/Rows';
+
+const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments}) => {
+  const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
+  return (
+    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} >
+      <TabsWithMenu.Tab title="متن ساده" icon="text">
+        <p className="font-light">{fullText}</p>
+        <div className="absolute bottom-0 w-[94%] mb-5">
+          <AudioPlayer src={audioSrc} theme={theme} />
+        </div>
+      </TabsWithMenu.Tab>
+      <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
+        <RowsTable texts={segments} />
+        <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
+          <AudioPlayer src={audioSrc} theme={theme} />
+        </div>
+      </TabsWithMenu.Tab>
+    </TabsWithMenu>
+  );
+};
 
 const SpeechToTextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [ uploadedAudio, setUploadedAudio ] = useState<Blob | null>(null);
   const [ directUrlAudio, setDirectUrlAudio ] = useState<string | null>(null);
+  const [selectedLang, setSelectedLang] = useState<string>("fa");
   const { recording, audio, micLevel, startRecording, stopRecording } = useAudioRecorder();
   const { loading, error, data, postData } = usePost<MediaInput, TranscriptionOutput>({
-    url: "/transcribe_files/", headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
+    url: `/transcribe_files/?lang=${selectedLang}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
   });
   const { uploading, errorUploading, fileUrl } = useBytescaleUploader(audio || uploadedAudio);
   const scale = useMemo(() => 1 + micLevel * 0.5, [micLevel]);
@@ -78,20 +100,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای شروع به صحبت، دکمه را فشار دهید<br />متن پیاده شده آن، در اینجا ظاهر شود</p>
                   </>
                 ) : (
-                  <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='green'>
-                    <TabsWithMenu.Tab title='متن ساده' icon='text'>
-                      <p className='font-light'>{data[0].segments.reduce((acc, cur) => acc.concat(cur["text"] + " "), "")}</p>
-                      <div className="absolute bottom-0 w-[94%] mb-5">
-                        <AudioPlayer src={fileUrl!} theme="green"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                    <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
-                      <RowsTable texts={data[0].segments} />
-                      <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
-                        <AudioPlayer src={fileUrl!} theme="green"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                  </TabsWithMenu>
+                  <TranscriptionTabs theme="green" audioSrc={fileUrl!} segments={data[0].segments} />
                 )
               ) : (
                 <span className="loader"></span>
@@ -110,20 +119,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای بارگذاری فایل گفتاری (صوتی/تصویری)، دکمه را فشار دهید<br/>متن پیاده شده آن، در اینجا ظاهر می شود</p>
                   </>
                 ) : (
-                  <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='blue'>
-                    <TabsWithMenu.Tab title='متن ساده' icon='text'>
-                      <p className='font-light'>{data[0].segments.reduce((acc, cur) => acc.concat(cur["text"] + " "), "")}</p>
-                      <div className="absolute bottom-0 w-[94%] mb-5">
-                        <AudioPlayer src={fileUrl!} theme="blue"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                    <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
-                      <RowsTable texts={data[0].segments} />
-                      <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
-                        <AudioPlayer src={fileUrl!} theme="blue"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                  </TabsWithMenu>
+                  <TranscriptionTabs theme="blue" audioSrc={fileUrl!} segments={data[0].segments} />
                 )
               ) : (
                 <span className="loader"></span>
@@ -144,20 +140,7 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">نشانی اینترنتی فایل حاوی گفتار (صوتی/تصویری) را وارد<br />و دکمه را فشار دهید</p>
                   </>
                 ) : (
-                  <TabsWithMenu defaultIndex={0} hasDownload={true} hasCopy={true} hasTryAgain={true} theme='red'>
-                    <TabsWithMenu.Tab title='متن ساده' icon='text'>
-                      <p className='font-light'>{data[0].segments.reduce((acc, cur) => acc.concat(cur["text"] + " "), "")}</p>
-                      <div className="absolute bottom-0 w-[94%] mb-5">
-                        <AudioPlayer src={directUrlAudio!} theme="red"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                    <TabsWithMenu.Tab title='متن زمان‌بندی شده' icon='time'>
-                      <RowsTable texts={data[0].segments} />
-                      <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
-                        <AudioPlayer src={directUrlAudio!} theme="red"/>
-                      </div>
-                    </TabsWithMenu.Tab>
-                  </TabsWithMenu>
+                  <TranscriptionTabs theme="red" audioSrc={fileUrl!} segments={data[0].segments} />
                 )
               ) : (
                 <span className="loader"></span>
@@ -167,7 +150,8 @@ const SpeechToTextPage = () => {
         </Tabs>
         <div className="flex gap-4 items-center absolute mt-3 left-0">
           <p className="font-light text-neutral-200">زبان گفتار:</p>
-          <DropdownMenu title="فارسی" options={[{ label: 'انگلیسی' }]} changeTitleOnSelect={true} swapLabelsOnSelect={true} className="pt-1.5 pb-1.5" />
+          <DropdownMenu title="فارسی" options={[{ label: 'انگلیسی' }]} changeTitleOnSelect={true} swapLabelsOnSelect={true} 
+          className="pt-1.5 pb-1.5" onSelect={(lang) => setSelectedLang(lang === "فارسی" ? "fa" : "en")}/>
         </div><br /> <br />
       </MainLayout.Main>
     </MainLayout>
