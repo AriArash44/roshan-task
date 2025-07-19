@@ -1,12 +1,28 @@
 import type {ReactNode, ReactElement} from 'react';
 
-export interface AudioPlayerProps {
-  src: string;
-  theme: themeColor;
+export interface ArchiveItem {
+  id: number;
+  url: string;
+  duration: string;
+  processed: string;
+  filename: string;
+  segments: Segment[];
+}
+
+export interface ArchiveResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ArchiveItem[];
 }
 
 export interface AsideProps {
   pages: PageConfig[];
+}
+
+export interface AudioPlayerProps {
+  src: string;
+  theme: themeColor;
 }
 
 export interface CompoundChildProps {
@@ -74,6 +90,22 @@ export interface Stats {
 
 export type TabElement = ReactElement<TabProps>;
 
+export interface TableColumn<T> {
+  title: string;
+  accessor: keyof T | string;
+  render?: (value: any, row: T) => React.ReactNode;
+}
+
+export interface TableProps<T extends Record<string, any> = Record<string, any>> {
+  data: T[];
+  columns: TableColumn<T>[];
+  hasIcon?: boolean;
+  hasDownload?: boolean;
+  hasWord?: boolean;
+  hasCopy?: boolean;
+  hasDelete?: boolean;
+}
+
 export interface TabProps {
   icon: string;
   title: string;
@@ -123,6 +155,20 @@ export type UseAudioRecorderReturn = {
   startRecording: () => Promise<void>;
   stopRecording: () => void;
 };
+
+
+export interface UseGetOptions {
+  url: string;
+  headers?: Record<string, string>;
+}
+
+export interface UseGetReturn<R> {
+  loading: boolean;
+  error: string | null;
+  data: R | null;
+  getData: () => Promise<void>;
+  reset: () => void;
+}
 
 export interface UsePostOptions<T> {
   url: string;
