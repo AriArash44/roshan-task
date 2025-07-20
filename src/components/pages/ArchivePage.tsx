@@ -68,7 +68,7 @@ const ArchivePage = () => {
                   "accessor": "duration",
                   "title": "مدت زمان"
                 },
-              ]} hasIcon hasDownload hasWord hasCopy hasDelete/>
+              ]} hasIcon hasDownload hasWord hasCopy hasDelete hasOpen/>
               <div className="flex justify-center mt-5">
                 <Pagination totalCount={data.count} limit={8} currentPage={currentPage} onPageChange={setCurrentPage}/>
               </div>
@@ -76,7 +76,6 @@ const ArchivePage = () => {
           : <></>
         }
       </MainLayout.Main>
-
     </MainLayout>
   )
 }

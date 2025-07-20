@@ -111,6 +111,7 @@ export interface TableProps<T extends Record<string, any> = Record<string, any>>
   hasWord?: boolean;
   hasCopy?: boolean;
   hasDelete?: boolean;
+  hasOpen?: boolean;
 }
 
 export interface TabProps {
@@ -152,7 +153,7 @@ export interface TranscriptionTabsProps {
   theme: themeColor;
   audioSrc: string;
   segments: Segment[];
-  tryAgain: () => void;
+  tryAgain?: () => void;
 }
 
 export type UseAudioRecorderReturn = {
