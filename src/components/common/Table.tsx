@@ -36,7 +36,7 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
             {hasDownload && (<td><button><img src={getIconPath("download")} alt="download" /></button></td>)}
             {hasWord && (<td><button><img src={getIconPath("word")} alt="word" /></button></td>)}
             {hasCopy && (<td><button><img src={getIconPath("copy")} alt="copy" /></button></td>)}
-            {hasDelete && (<td><button><img src={getIconPath("delete")} alt="delete" /></button></td>)}
+            {hasDelete && (<td><button><img src={getIconPath("del")} alt="del" /></button></td>)}
           </tr>
         ))}
       </tbody>

@@ -20,7 +20,7 @@ export const handlers = [
 
   http.get(`${import.meta.env.VITE_MOCK_URL}/requests/`, async ({ request }) => {
     const url = new URL(request.url);
-    const limit = parseInt(url.searchParams.get("limit") ?? "10");
+    const limit = parseInt(url.searchParams.get("limit") ?? "8");
     const offset = parseInt(url.searchParams.get("offset") ?? "0");
     const results = archiveData["results"];
     const totalCount = results.length;

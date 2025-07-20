@@ -1,16 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import MainLayout from "../layouts/MainLayout";
 import Table from "../common/Table";
 import { useGet } from "../../hooks/useGet";
 import type { ArchiveResponse } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
-import { getTitleFromAccessor } from "../../utils/mapAccessorToTitle"; 
 
 const ArchivePage = () => {
   const [paginationQueryParams, setPaginationQueryParams] = useState<string>("");
   const {loading, data, error, getData} = useGet<ArchiveResponse>({
     url: `/requests/?${paginationQueryParams}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
   });
+  const enhancedResults = useMemo(() => {
+    return data?.results.map(item => ({
+      ...item,
+      filetype: item.filename.split('.').pop()?.toLowerCase() ?? 'unknown',
+    })) ?? [];
+  }, [data]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +39,24 @@ const ArchivePage = () => {
           <div className="loader"></div> 
           : data ? 
             <>
-              <Table data={data.results} columns={Object.keys(data.results).map((col) => {
-                return {
-                  "accessor": col,
-                  "title": getTitleFromAccessor(col)
-                }
-              })} hasIcon hasDownload hasWord hasCopy hasDelete/>
+              <Table data={enhancedResults} columns={[
+                {
+                  "accessor": "filename",
+                  "title": "نام فایل"
+                },
+                {
+                  "accessor": "processed",
+                  "title": "تاریخ بارگذاری"
+                },
+                {
+                  "accessor": "filetype",
+                  "title": "نوع فایل"
+                },
+                {
+                  "accessor": "duration",
+                  "title": "مدت زمان"
+                },
+              ]} hasIcon hasDownload hasWord hasCopy hasDelete/>
               <div className="flex justify-between mt-4">
                 <button
                   disabled={!data.previous}
