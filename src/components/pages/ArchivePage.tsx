@@ -10,6 +10,7 @@ import { validFormats } from "../../consts/mediaFormats";
 
 const ArchivePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshFlag, setRefreshFlag]   = useState(false);
   const queryParams = useMemo(() => {
     const offset = (currentPage - 1) * 8;
     return `limit=8&offset=${offset}`;
@@ -34,12 +35,29 @@ const ArchivePage = () => {
 
   useEffect(() => {
     getData();
-  }, [queryParams]);
+  }, [queryParams, refreshFlag]);
   useEffect(() => {
     if(error){
       showToast(error);
     }
   }, [error]);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_MOCK_URL}/requests/${id}/`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
+        }
+      );
+      if (!res.ok) throw new Error('error during deleting!');
+      showToast('successfully deleted!');
+      setRefreshFlag(flag => !flag);
+    } catch (err: any) {
+      showToast(err.message);
+    }
+  };
 
   return (
     <MainLayout>
@@ -68,7 +86,7 @@ const ArchivePage = () => {
                   "accessor": "duration",
                   "title": "مدت زمان"
                 },
-              ]} hasIcon hasDownload hasWord hasCopy hasDelete hasOpen/>
+              ]} hasIcon hasDownload hasWord hasCopy hasDelete hasOpen onDelete={handleDelete}/>
               <div className="flex justify-center mt-5">
                 <Pagination totalCount={data.count} limit={8} currentPage={currentPage} onPageChange={setCurrentPage}/>
               </div>

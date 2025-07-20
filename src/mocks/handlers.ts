@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw';
 import { persianText, englishText, archiveData } from './mockData';
 
+const deletedRequestIds: number[] = [];
+
 export const handlers = [
   http.post(`${import.meta.env.VITE_MOCK_URL}/transcribe_files/`, async ({ request }) => {
     const url = new URL(request.url);
@@ -22,26 +24,34 @@ export const handlers = [
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get("limit") ?? "10");
     const offset = parseInt(url.searchParams.get("offset") ?? "0");
-    const results = archiveData["results"];
-    const totalCount = results.length;
-    const icons = ["mic", "upload", "chain"];
-    const paginatedResults = results
-      .slice(offset, offset + limit)
-      .map((item) => ({
-        ...item,
-        icon: icons[Math.floor(Math.random() * 3)]
-      }));
+    const all = archiveData.results.filter(item => !deletedRequestIds.includes(item.id));
+    const totalCount = all.length;
+    const pageSlice = all.slice(offset, offset + limit);
+    const icons = ['mic', 'upload', 'chain'];
+    const results = pageSlice.map(item => ({
+      ...item,
+      icon: icons[Math.floor(Math.random() * icons.length)]
+    }));
     const nextOffset = offset + limit;
     const hasNext = nextOffset < totalCount;
-    const nextUrl = hasNext ? `limit=${limit}&offset=${nextOffset}` : null;
     const prevOffset = Math.max(offset - limit, 0);
     const hasPrev = offset > 0;
-    const prevUrl = hasPrev? `limit=${limit}&offset=${prevOffset}` : null;
     return HttpResponse.json({
-      count: totalCount,
-      next: nextUrl,
-      previous: prevUrl,
-      results: paginatedResults,
+      count:    totalCount,
+      next:     hasNext ? `limit=${limit}&offset=${nextOffset}` : null,
+      previous: hasPrev ? `limit=${limit}&offset=${prevOffset}` : null,
+      results,
     });
+  }),
+
+  http.delete(`${import.meta.env.VITE_MOCK_URL}/requests/:id/`, async ({ request }) => {
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/').filter(Boolean);
+    const idStr = segments[segments.length - 1];
+    const id = parseInt(idStr, 10);
+    if (!deletedRequestIds.includes(id)) {
+      deletedRequestIds.push(id);
+    }
+    return HttpResponse.text('', { status: 204 });
   }),
 ];

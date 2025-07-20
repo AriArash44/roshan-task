@@ -112,6 +112,7 @@ export interface TableProps<T extends Record<string, any> = Record<string, any>>
   hasCopy?: boolean;
   hasDelete?: boolean;
   hasOpen?: boolean;
+  onDelete?: (id: number) => void;
 }
 
 export interface TabProps {

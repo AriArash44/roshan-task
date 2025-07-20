@@ -34,7 +34,7 @@ const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segmen
 };
 
 const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, hasDownload = false,
-  hasWord = false, hasCopy = false, hasDelete = false, hasOpen = false}: TableProps<T>) => {
+  hasWord = false, hasCopy = false, hasDelete = false, hasOpen = false, onDelete}: TableProps<T>) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [size, setSize] = useState<string>("نامعلوم");
   const [url, setUrl] = useState<string | null>(null);
@@ -108,7 +108,8 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
                   }><img src={getIconPath("copy")} alt="copy" /></button>
                 </div>)}
                 {hasDelete && (<div role="cell" className="flex-1 flex justify-center">
-                  <button className="cursor-pointer"><img src={getIconPath("del")} alt="delete" /></button>
+                  <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) => 
+                    {e.stopPropagation(); if(onDelete) onDelete(row["id"])}}><img src={getIconPath("del")} alt="delete" /></button>
                 </div>)}
               </div>
             </div>
