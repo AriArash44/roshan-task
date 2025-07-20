@@ -31,16 +31,16 @@ function pickIcon(type: string, hovered: { id: number; type: string } | null, ro
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments }) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
   return (
-    <TabsWithMenu defaultIndex={0} hasDownload={false} hasCopy={false} hasTryAgain={false} theme={theme}>
+    <TabsWithMenu defaultIndex={0} hasDownload={false} hasCopy={false} hasTryAgain={false} theme={theme} headerClass="w-full" contentClass='pl-10'>
       <TabsWithMenu.Tab title="متن ساده" icon="text">
         <p className="font-light">{fullText}</p>
-        <div className="absolute bottom-0 w-[94%] mb-5">
+        <div className="absolute bottom-0 w-full mb-5">
           <AudioPlayer src={audioSrc} theme={theme} />
         </div>
       </TabsWithMenu.Tab>
       <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
         <RowsTable texts={segments} />
-        <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
+        <div className="absolute bottom-0 w-full pb-5 rounded-b-xl pt-2 bg-neutral-white">
           <AudioPlayer src={audioSrc} theme={theme} />
         </div>
       </TabsWithMenu.Tab>

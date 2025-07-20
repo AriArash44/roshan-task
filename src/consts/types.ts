@@ -137,6 +137,8 @@ export interface TabsWithMenuProps {
   onDownload?: () => void;
   onCopy?: () => void;
   onTryAgain?: () => void;
+  headerClass?: string;
+  contentClass?: string;
 }
 
 export type themeColor = "red" | "green" | "blue";

@@ -62,7 +62,7 @@ const ArchivePage = () => {
   return (
     <MainLayout>
       <MainLayout.Header>
-        <h2 className="w-250 px-10 text-right text-green">آرشیو من</h2>
+        <h2 className="w-250 px-3 text-right text-green">آرشیو من</h2>
       </MainLayout.Header>
       <MainLayout.Main>
         { loading ? 

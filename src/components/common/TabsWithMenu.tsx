@@ -4,12 +4,12 @@ import type { TabElement, TabProps, TabsWithMenuProps } from "../../consts/types
 import { getIconPath, getBlackIconPath } from '../../utils/getIconPath';
 
 const TabsWithMenu: FC<TabsWithMenuProps> & { Tab: FC<TabProps> } = 
-  ({children, defaultIndex = 0, hasDownload, hasCopy, hasTryAgain, theme, onDownload, onCopy, onTryAgain}) => {
+  ({children, defaultIndex = 0, hasDownload, hasCopy, hasTryAgain, theme, onDownload, onCopy, onTryAgain, headerClass, contentClass}) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   const tabs = React.Children.toArray(children) as TabElement[];
   return (
-    <div className='w-full h-full overflow-scroll'>
-      <div className="flex justify-between border-b-1 bg-white [border-color:hsla(0,0%,0%,0.3)] absolute top-0 w-[94%] mt-2">
+    <div className={`w-full h-full overflow-scroll overflow-x-hidden ${contentClass}`}>
+      <div className={`flex justify-between border-b-1 bg-white [border-color:hsla(0,0%,0%,0.3)] absolute top-0 ${headerClass}`}>
         <div className="flex gap-6">
           {tabs.map((tab, idx) => (
             <button key={idx} className={`flex items-center gap-2 px-2 py-5 cursor-pointer text-neutral-black

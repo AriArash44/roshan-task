@@ -17,7 +17,7 @@ import { handleCopy } from '../../utils/copyText';
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments, tryAgain}) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
   return (
-    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} onTryAgain={() => {tryAgain!()}}
+    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} onTryAgain={() => {tryAgain!()}} headerClass="w-[94%] mt-2"
     onDownload={() => {handleDownload(audioSrc)}} onCopy={() => {handleCopy(fullText); showToast("text copied!")}}>
       <TabsWithMenu.Tab title="متن ساده" icon="text">
         <p className="font-light">{fullText}</p>
