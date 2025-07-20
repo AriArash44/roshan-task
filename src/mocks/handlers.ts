@@ -27,9 +27,9 @@ export const handlers = [
     const icons = ["mic", "upload", "chain"];
     const paginatedResults = results
       .slice(offset, offset + limit)
-      .map((item, idx) => ({
+      .map((item) => ({
         ...item,
-        icon: icons[(offset + idx) % icons.length],
+        icon: icons[Math.floor(Math.random() * 3)]
       }));
     const nextOffset = offset + limit;
     const hasNext = nextOffset < totalCount;

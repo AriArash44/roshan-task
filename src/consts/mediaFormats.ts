@@ -1,0 +1,1 @@
+export const validFormats = ["wav", "mp3", "aac", "flac", "webm", "m4a", "mp4", "mov", "mkv"];

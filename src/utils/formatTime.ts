@@ -19,5 +19,5 @@ export function emitHourMili(time: string): string {
 export function gregorianToJalali(gregorianDate: string): string {
   const [gy, gm, gd] = gregorianDate.split("-").map((item) => parseInt(item));
   const { jy, jm, jd } = toJalaali(gy, gm, gd);
-  return `${jy}/${pad(jm)}/${pad(jd)}`;
+  return `${jy}-${pad(jm)}-${pad(jd)}`;
 };
