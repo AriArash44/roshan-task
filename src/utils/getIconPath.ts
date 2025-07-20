@@ -9,3 +9,7 @@ export function getWhiteIconPath(name: string): string {
 export function getBlackIconPath(name: string): string {
   return `/images/icons/${name}-black.svg`;
 }
+
+export function getGreenIconPath(name: string): string {
+  return `/images/icons/${name}-green.svg`;
+}

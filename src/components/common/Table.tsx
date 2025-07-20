@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import type { TableProps, TranscriptionTabsProps, Segment } from "../../consts/types";
-import { getWhiteIconPath, getIconPath } from "../../utils/getIconPath";
+import { getWhiteIconPath, getIconPath, getGreenIconPath } from "../../utils/getIconPath";
 import { persianNumberColumns, wideColumns } from "../../consts/tableColumns";
 import TabsWithMenu from "../common/TabsWithMenu";
 import AudioPlayer from "../common/AudioPlayer";
@@ -12,6 +12,21 @@ import { handleDownload } from "../../utils/downloadUrl";
 import handleWord from "../../utils/createWord";
 import Tooltip from "./Tooltip";
 import getFileSize from "../../utils/getFileSize";
+
+function pickIcon(type: string, hovered: { id: number; type: string } | null, rowId: number) {
+  const isHovering = hovered?.id === rowId && hovered?.type === type;
+  if(isHovering){
+    if(type === "del") {
+      return getWhiteIconPath("del");
+    }
+    else {
+      return getGreenIconPath(type);
+    }
+  }
+  else{
+    return getIconPath(type);
+  }
+}
 
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments }) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
@@ -38,6 +53,7 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [size, setSize] = useState<string>("نامعلوم");
   const [url, setUrl] = useState<string | null>(null);
+  const [hoveredIcon, setHoveredIcon] = useState<{ id: number, type: string } | null>(null)
   useEffect(() => {
     if(!url) return;
     getFileSize(url).then((res) => {
@@ -95,21 +111,27 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
               <div className="flex gap-1 w-[12%] items-center">
                 {hasDownload && (<Tooltip text={size}><div role="cell" className="flex-1 flex ml-1" onMouseEnter={() => setUrl(row["url"] as string)} onMouseLeave={() => setUrl(null)}>
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    {e.stopPropagation(); handleDownload(row["url"]);}
-                  }><img src={getIconPath("download")} alt="download" /></button>
+                    {e.stopPropagation(); handleDownload(row["url"]);} 
+                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "download" })} onMouseLeave={() => setHoveredIcon(null)
+                  }><img src={pickIcon("download", hoveredIcon, rowIdx)} alt="download" /></button>
                 </div></Tooltip>)}
                 {hasWord && (<div role="cell" className="flex-1 flex justify-center">
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                  {e.stopPropagation(); handleWord(row["segments"].map((s: Segment) => s.text).join(" "))}}><img src={getIconPath("word")} alt="word" /></button>
+                    {e.stopPropagation(); handleWord(row["segments"].map((s: Segment) => s.text).join(" "))}
+                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "word" })} onMouseLeave={() => setHoveredIcon(null)
+                  }><img src={pickIcon("word", hoveredIcon, rowIdx)} alt="word" /></button>
                 </div>)}
                 {hasCopy && (<div role="cell" className="flex-1 flex justify-center">
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                     {e.stopPropagation(); handleCopy(row["segments"].map((s: Segment) => s.text).join(" ")); showToast("text copied!")}
-                  }><img src={getIconPath("copy")} alt="copy" /></button>
+                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "copy" })} onMouseLeave={() => setHoveredIcon(null)
+                  }><img src={pickIcon("copy", hoveredIcon, rowIdx)} alt="copy" /></button>
                 </div>)}
                 {hasDelete && (<div role="cell" className="flex-1 flex justify-center">
-                  <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) => 
-                    {e.stopPropagation(); if(onDelete) onDelete(row["id"])}}><img src={getIconPath("del")} alt="delete" /></button>
+                  <button className="cursor-pointer hover:bg-red p-1 rounded-full w-6 h-6" onClick={(e: React.MouseEvent<HTMLButtonElement>) => 
+                    {e.stopPropagation(); if(onDelete) onDelete(row["id"])}
+                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "del" })} onMouseLeave={() => setHoveredIcon(null)
+                  }><img src={pickIcon("del", hoveredIcon, rowIdx)} alt="delete" className="m-auto"/></button>
                 </div>)}
               </div>
             </div>
