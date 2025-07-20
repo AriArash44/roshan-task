@@ -58,6 +58,13 @@ export interface PageConfig {
   icon: string;
 }
 
+export interface PaginationProps {
+  totalCount: number;
+  limit: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
+
 export interface RangeSliderProps {
   value: number;
   max: number;

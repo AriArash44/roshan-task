@@ -1,7 +1,7 @@
 import type { TableProps } from "../../consts/types";
 import { getWhiteIconPath, getIconPath } from "../../utils/getIconPath";
 
-const persianNumberColumns = [""];
+const persianNumberColumns = ["duration", "processed"];
 
 const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, hasDownload = false, 
   hasWord = false, hasCopy = false, hasDelete = false}: TableProps<T>) => {
@@ -22,7 +22,8 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
       <tbody>
         {data.map((row, rowIdx) => (
           <tr key={rowIdx}>
-            {hasIcon && (<td><img src={getWhiteIconPath(row["icon"])} alt={row["icon"]} /> </td>)}
+            {hasIcon && (<td><img src={getWhiteIconPath(row["icon"])} alt={row["icon"]} 
+            className={row["icon"] === "mic" ? "bg-green" : row["icon"] === "upload" ? "bg-blue" : "bg-red"}/> </td>)}
             {columns.map((col, colIdx) => {
               const raw = (row as any)[col.accessor];
               return (

@@ -4,25 +4,35 @@ import Table from "../common/Table";
 import { useGet } from "../../hooks/useGet";
 import type { ArchiveResponse } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
+import { emitHourMili, gregorianToJalali } from "../../utils/formatTime";
+import Pagination from "../common/Pagination";
 
 const ArchivePage = () => {
-  const [paginationQueryParams, setPaginationQueryParams] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const queryParams = useMemo(() => {
+    const offset = (currentPage - 1) * 8;
+    return `limit=8&offset=${offset}`;
+  }, [currentPage]);
   const {loading, data, error, getData} = useGet<ArchiveResponse>({
-    url: `/requests/?${paginationQueryParams}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
+    url: `/requests/?${queryParams}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
   });
   const enhancedResults = useMemo(() => {
-    return data?.results.map(item => ({
-      ...item,
-      filetype: item.filename.split('.').pop()?.toLowerCase() ?? 'unknown',
-    })) ?? [];
+    return data?.results.map(item => {
+      const filetype = item.filename?.split('.').pop()?.toLowerCase() ?? 'unknown';
+      const transformedDuration = emitHourMili(item.duration);
+      const transformedProcessed = gregorianToJalali(item.processed.split("T")[0]);
+      return {
+        ...item,
+        filetype,
+        duration: transformedDuration,
+        processed: transformedProcessed ?? item.processed,
+      };
+    }) ?? [];
   }, [data]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getData();
-    };
-    fetchData();
-  }, [paginationQueryParams]);
+    getData();
+  }, [queryParams]);
   useEffect(() => {
     if(error){
       showToast(error);
@@ -57,23 +67,7 @@ const ArchivePage = () => {
                   "title": "مدت زمان"
                 },
               ]} hasIcon hasDownload hasWord hasCopy hasDelete/>
-              <div className="flex justify-between mt-4">
-                <button
-                  disabled={!data.previous}
-                  className="px-4 py-1.5 rounded bg-gray-100 disabled:opacity-50"
-                  onClick={() => setPaginationQueryParams(data.previous ?? "")}
-                >
-                  صفحه قبل
-                </button>
-
-                <button
-                  disabled={!data.next}
-                  className="px-4 py-1.5 rounded bg-gray-100 disabled:opacity-50"
-                  onClick={() => setPaginationQueryParams(data.next ?? "")}
-                >
-                  صفحه بعد
-                </button>
-              </div>
+              <Pagination totalCount={data.count} limit={8} currentPage={currentPage} onPageChange={setCurrentPage}/>
             </>
           : <></>
         }

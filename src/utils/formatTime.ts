@@ -1,3 +1,5 @@
+import { toJalaali } from 'jalaali-js';
+
 const pad = (n: number) => n.toString().padStart(2, "0");
 
 export function secToTime(sec: number): string {
@@ -13,3 +15,9 @@ export function emitHourMili(time: string): string {
   const second = parseInt(parts[2]);
   return `${pad(minute)}:${pad(second)}`;
 }
+
+export function gregorianToJalali(gregorianDate: string): string {
+  const [gy, gm, gd] = gregorianDate.split("-").map((item) => parseInt(item));
+  const { jy, jm, jd } = toJalaali(gy, gm, gd);
+  return `${jy}/${pad(jm)}/${pad(jd)}`;
+};
