@@ -140,6 +140,11 @@ export interface TabsWithMenuProps {
 
 export type themeColor = "red" | "green" | "blue";
 
+export interface TooltipProps {
+  text: string;
+  children: React.ReactNode;
+}
+
 export interface TranscriptionItem {
   media_url: string;
   duration: string;

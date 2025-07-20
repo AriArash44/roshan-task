@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { TableProps, TranscriptionTabsProps, Segment } from "../../consts/types";
 import { getWhiteIconPath, getIconPath } from "../../utils/getIconPath";
 import { persianNumberColumns, wideColumns } from "../../consts/tableColumns";
@@ -10,6 +10,8 @@ import { handleCopy } from "../../utils/copyText";
 import { showToast } from "../../utils/showToastHandler";
 import { handleDownload } from "../../utils/downloadUrl";
 import handleWord from "../../utils/createWord";
+import Tooltip from "./Tooltip";
+import getFileSize from "../../utils/getFileSize";
 
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments }) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
@@ -34,6 +36,14 @@ const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segmen
 const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, hasDownload = false,
   hasWord = false, hasCopy = false, hasDelete = false, hasOpen = false}: TableProps<T>) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [size, setSize] = useState<string>("نامعلوم");
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if(!url) return;
+    getFileSize(url).then((res) => {
+      setSize(res ? `${res} مگابایت` : "نامعلوم");
+    });
+  }, [url]);
   return (
     <div role="table" className="w-250">
       <div role="rowgroup" className="hidden md:block">
@@ -55,9 +65,9 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
       </div>
       <div role="rowgroup" className="flex flex-col">
         {data.map((row, rowIdx) => (
-          <div className={`rounded-xl ${ openIndex === rowIdx ? (row["icon"] === "mic" ? "border border-green-500" : 
+          <div key={rowIdx} className={`rounded-xl ${ openIndex === rowIdx ? (row["icon"] === "mic" ? "border border-green-500" : 
           row["icon"] === "upload" ? "border border-blue-500" : "border border-red-500") : "" }`}>
-            <div key={rowIdx} role="row" className="flex items-center p-3 rounded-lg hover:shadow-md"
+            <div role="row" className="flex items-center p-3 rounded-lg hover:shadow-md"
             onClick={() => {
               if(hasOpen) {
                 if(openIndex === rowIdx) {
@@ -83,21 +93,21 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
                 );
               })}
               <div className="flex gap-1 w-[12%] items-center">
-                {hasDownload && (<div role="cell" className="flex-1">
+                {hasDownload && (<Tooltip text={size}><div role="cell" className="flex-1 flex ml-1" onMouseEnter={() => setUrl(row["url"] as string)} onMouseLeave={() => setUrl(null)}>
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                     {e.stopPropagation(); handleDownload(row["url"]);}
                   }><img src={getIconPath("download")} alt="download" /></button>
-                </div>)}
-                {hasWord && (<div role="cell" className="flex-1">
+                </div></Tooltip>)}
+                {hasWord && (<div role="cell" className="flex-1 flex justify-center">
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                   {e.stopPropagation(); handleWord(row["segments"].map((s: Segment) => s.text).join(" "))}}><img src={getIconPath("word")} alt="word" /></button>
                 </div>)}
-                {hasCopy && (<div role="cell" className="flex-1">
+                {hasCopy && (<div role="cell" className="flex-1 flex justify-center">
                   <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                     {e.stopPropagation(); handleCopy(row["segments"].map((s: Segment) => s.text).join(" ")); showToast("text copied!")}
                   }><img src={getIconPath("copy")} alt="copy" /></button>
                 </div>)}
-                {hasDelete && (<div role="cell" className="flex-1">
+                {hasDelete && (<div role="cell" className="flex-1 flex justify-center">
                   <button className="cursor-pointer"><img src={getIconPath("del")} alt="delete" /></button>
                 </div>)}
               </div>
