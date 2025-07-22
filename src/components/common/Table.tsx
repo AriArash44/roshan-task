@@ -60,6 +60,13 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
       setSize(res ? `${res} مگابایت` : "نامعلوم");
     });
   }, [url]);
+  const icons = ['mic', 'upload', 'chain'];
+  const decoratedData = useMemo(() => {
+    return data.map((row) => {
+      const stableIcon = row["icon"] ?? icons[Math.floor(Math.random() * icons.length)];
+      return { ...row, stableIcon };
+    });
+  }, [data]);
   return (
     <div role="table" className="w-250">
       <div role="rowgroup" className="hidden md:block">
@@ -80,69 +87,71 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
         </div>
       </div>
       <div role="rowgroup" className="flex flex-col">
-        {data.map((row, rowIdx) => (
-          <div key={rowIdx} className={`rounded-xl ${ openIndex === rowIdx ? (row["icon"] === "mic" ? "border border-green-500" : 
-          row["icon"] === "upload" ? "border border-blue-500" : "border border-red-500") : "" }`}>
-            <div role="row" className="flex items-center p-3 rounded-lg hover:shadow-md"
-            onClick={() => {
-              if(hasOpen) {
-                if(openIndex === rowIdx) {
-                  setOpenIndex(null);
-                } else {
-                  setOpenIndex(rowIdx);
-                } 
-              }
-            }}>
-              {hasIcon && (
-                <div role="cell" className="w-[6%] flex">
-                  <img src={getWhiteIconPath(row["icon"])} alt={row["icon"]} className={`p-2 w-8 h-8 rounded-full
-                  ${ row["icon"] === "mic" ? "bg-green-500" : row["icon"] === "upload" ? "bg-blue-500" : "bg-red-500" }`} />
+        {decoratedData.map((row, rowIdx) => {
+          return (
+            <div key={rowIdx} className={`rounded-xl ${ openIndex === rowIdx ? (row.stableIcon === "mic" ? "border border-green-500" : 
+            row.stableIcon === "upload" ? "border border-blue-500" : "border border-red-500") : "" }`}>
+              <div role="row" className="flex items-center p-3 rounded-lg hover:shadow-md"
+              onClick={() => {
+                if(hasOpen) {
+                  if(openIndex === rowIdx) {
+                    setOpenIndex(null);
+                  } else {
+                    setOpenIndex(rowIdx);
+                  } 
+                }
+              }}>
+                {hasIcon && (
+                  <div role="cell" className="w-[6%] flex">
+                    <img src={getWhiteIconPath(row.stableIcon)} alt={row["icon"]} className={`p-2 w-8 h-8 rounded-full
+                    ${row.stableIcon === "mic" ? "bg-green-500" : row.stableIcon === "upload" ? "bg-blue-500" : "bg-red-500" }`} />
+                  </div>
+                )}
+                {columns.map((col, colIdx) => {
+                  const raw = (row as any)[col.accessor];
+                  return (
+                    <div key={colIdx} role="cell" className={`${wideColumns.includes(col.accessor.toString()) ? "w-2/5 text-right" : "flex-1 text-center"}
+                    px-2 truncate ${persianNumberColumns.includes(col.accessor.toString()) ? "fanum" : ""}`} dir="ltr">
+                      {col.render ? col.render(raw, row) : String(raw)}
+                    </div>
+                  );
+                })}
+                <div className="flex gap-1 w-[12%] items-center">
+                  {hasDownload && (<Tooltip text={size}><div role="cell" className="flex-1 flex ml-1" onMouseEnter={() => setUrl(row["url"] as string)} onMouseLeave={() => setUrl(null)}>
+                    <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      {e.stopPropagation(); handleDownload(row["url"]);} 
+                      } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "download" })} onMouseLeave={() => setHoveredIcon(null)
+                    }><img src={pickIcon("download", hoveredIcon, rowIdx)} alt="download" /></button>
+                  </div></Tooltip>)}
+                  {hasWord && (<div role="cell" className="flex-1 flex justify-center">
+                    <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      {e.stopPropagation(); handleWord(row["segments"].map((s: Segment) => s.text).join(" "))}
+                      } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "word" })} onMouseLeave={() => setHoveredIcon(null)
+                    }><img src={pickIcon("word", hoveredIcon, rowIdx)} alt="word" /></button>
+                  </div>)}
+                  {hasCopy && (<div role="cell" className="flex-1 flex justify-center">
+                    <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      {e.stopPropagation(); handleCopy(row["segments"].map((s: Segment) => s.text).join(" ")); showToast("text copied!")}
+                      } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "copy" })} onMouseLeave={() => setHoveredIcon(null)
+                    }><img src={pickIcon("copy", hoveredIcon, rowIdx)} alt="copy" /></button>
+                  </div>)}
+                  {hasDelete && (<div role="cell" className="flex-1 flex justify-center">
+                    <button className="cursor-pointer hover:bg-red p-1 rounded-full w-6 h-6" onClick={(e: React.MouseEvent<HTMLButtonElement>) => 
+                      {e.stopPropagation(); if(onDelete) onDelete(row["id"])}
+                      } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "del" })} onMouseLeave={() => setHoveredIcon(null)
+                    }><img src={pickIcon("del", hoveredIcon, rowIdx)} alt="delete" className="m-auto"/></button>
+                  </div>)}
+                </div>
+              </div>
+              {openIndex === rowIdx && (
+                <div className="relative h-100 mr-10">
+                  <TranscriptionTabs audioSrc={row["url"]} segments={row["segments"]}
+                    theme={row["icon"] === "mic" ? "green" : row["icon"] === "upload" ? "blue" : "red"} />
                 </div>
               )}
-              {columns.map((col, colIdx) => {
-                const raw = (row as any)[col.accessor];
-                return (
-                  <div key={colIdx} role="cell" className={`${wideColumns.includes(col.accessor.toString()) ? "w-2/5 text-right" : "flex-1 text-center"}
-                  px-2 truncate ${persianNumberColumns.includes(col.accessor.toString()) ? "fanum" : ""}`} dir="ltr">
-                    {col.render ? col.render(raw, row) : String(raw)}
-                  </div>
-                );
-              })}
-              <div className="flex gap-1 w-[12%] items-center">
-                {hasDownload && (<Tooltip text={size}><div role="cell" className="flex-1 flex ml-1" onMouseEnter={() => setUrl(row["url"] as string)} onMouseLeave={() => setUrl(null)}>
-                  <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    {e.stopPropagation(); handleDownload(row["url"]);} 
-                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "download" })} onMouseLeave={() => setHoveredIcon(null)
-                  }><img src={pickIcon("download", hoveredIcon, rowIdx)} alt="download" /></button>
-                </div></Tooltip>)}
-                {hasWord && (<div role="cell" className="flex-1 flex justify-center">
-                  <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    {e.stopPropagation(); handleWord(row["segments"].map((s: Segment) => s.text).join(" "))}
-                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "word" })} onMouseLeave={() => setHoveredIcon(null)
-                  }><img src={pickIcon("word", hoveredIcon, rowIdx)} alt="word" /></button>
-                </div>)}
-                {hasCopy && (<div role="cell" className="flex-1 flex justify-center">
-                  <button className="cursor-pointer" onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    {e.stopPropagation(); handleCopy(row["segments"].map((s: Segment) => s.text).join(" ")); showToast("text copied!")}
-                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "copy" })} onMouseLeave={() => setHoveredIcon(null)
-                  }><img src={pickIcon("copy", hoveredIcon, rowIdx)} alt="copy" /></button>
-                </div>)}
-                {hasDelete && (<div role="cell" className="flex-1 flex justify-center">
-                  <button className="cursor-pointer hover:bg-red p-1 rounded-full w-6 h-6" onClick={(e: React.MouseEvent<HTMLButtonElement>) => 
-                    {e.stopPropagation(); if(onDelete) onDelete(row["id"])}
-                    } onMouseEnter={() => setHoveredIcon({ id: rowIdx, type: "del" })} onMouseLeave={() => setHoveredIcon(null)
-                  }><img src={pickIcon("del", hoveredIcon, rowIdx)} alt="delete" className="m-auto"/></button>
-                </div>)}
-              </div>
             </div>
-            {openIndex === rowIdx && (
-              <div className="relative h-100 mr-10">
-                <TranscriptionTabs audioSrc={row["url"]} segments={row["segments"]}
-                  theme={row["icon"] === "mic" ? "green" : row["icon"] === "upload" ? "blue" : "red"} />
-              </div>
-            )}
-          </div>
-        ))}
+          )}
+        )}
       </div>
     </div>
   );

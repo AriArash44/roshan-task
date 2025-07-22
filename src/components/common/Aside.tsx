@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 
 const Aside = ({ pages }: AsideProps) => {
   const { pathname } = useLocation();
-  const [isTall, setIsTall] = useState(false);
+  const [heightRatio, setHeightRatio] = useState(1);
   useEffect(() => {
     const checkHeight = () => {
       const documentHeight = document.body.scrollHeight;
       const screenHeight = window.innerHeight;
-      setIsTall(documentHeight > screenHeight);
+      setHeightRatio(documentHeight / screenHeight);
     };
     checkHeight();
     const observer = new MutationObserver(checkHeight);
@@ -41,8 +41,8 @@ const Aside = ({ pages }: AsideProps) => {
             <Link
               key={path}
               to={to}
-              className={`flex items-center mb-4 py-2 rounded-lg ${
-                isTall ? "w-[80%]" : "w-[70%]"} ${isActive ? "bg-dark-green font-bold" : ""}`}
+              className={`flex items-center mb-4 py-2 rounded-lg w-[${Math.floor((heightRatio - 1) * 25) + 70}%]
+              ${isActive ? "bg-dark-green font-bold" : ""}`}
             >
               <img src={icon} alt="" className="h-5 mr-2 w-[15%]" />
               <span className="flex-1 text-center text-[clamp(0.5rem,2.4vw,0.8rem)] text-white pl-2">{label}</span>

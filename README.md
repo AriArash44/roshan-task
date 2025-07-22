@@ -39,7 +39,7 @@ VITE_API_KEY=????
 VITE_BYTESCALE_API_KEY=????
 VITE_BASE_URL=https://harf.roshan-ai.ir/api
 VITE_MOCK_URL=https://harf.roshan-ai.ir/mock/api
-VITE_USE_MOCK=true
+VITE_USE_MOCK=false
 ```
 
 ### 3. Install dependencies and run the app

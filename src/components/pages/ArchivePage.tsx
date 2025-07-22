@@ -10,10 +10,10 @@ import { validFormats } from "../../consts/mediaFormats";
 
 const ArchivePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [refreshFlag, setRefreshFlag]   = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(false);
   const queryParams = useMemo(() => {
-    const offset = (currentPage - 1) * 8;
-    return `limit=8&offset=${offset}`;
+    const offset = (currentPage - 1) * 10;
+    return `limit=10&offset=${offset}&page=${currentPage}`;
   }, [currentPage]);
   const {loading, data, error, getData} = useGet<ArchiveResponse>({
     url: `/requests/?${queryParams}`, headers: {Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
@@ -45,7 +45,7 @@ const ArchivePage = () => {
   const handleDelete = async (id: number) => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_MOCK_URL}/requests/${id}/`,
+        `${import.meta.env.VITE_USE_MOCK === "true" ? import.meta.env.VITE_MOCK_URL : import.meta.env.VITE_BASE_URL}/requests/${id}/`,
         {
           method: 'DELETE',
           headers: { Authorization: `Token ${import.meta.env.VITE_API_KEY}` },
@@ -62,7 +62,7 @@ const ArchivePage = () => {
   return (
     <MainLayout>
       <MainLayout.Header>
-        <h2 className="w-250 px-3 text-right text-green">آرشیو من</h2>
+        {data && <h2 className="w-250 px-3 text-right text-green">آرشیو من</h2>}
       </MainLayout.Header>
       <MainLayout.Main>
         { loading ? 
@@ -88,7 +88,7 @@ const ArchivePage = () => {
                 },
               ]} hasIcon hasDownload hasWord hasCopy hasDelete hasOpen onDelete={handleDelete}/>
               <div className="flex justify-center mt-5">
-                <Pagination totalCount={data.count} limit={8} currentPage={currentPage} onPageChange={setCurrentPage}/>
+                <Pagination totalCount={data.count} limit={10} currentPage={currentPage} onPageChange={setCurrentPage}/>
               </div>
             </>
           : <></>

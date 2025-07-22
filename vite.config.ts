@@ -8,4 +8,14 @@ export default defineConfig(({ mode }) => ({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://harf.roshan-ai.ir/api',
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+    }
+  }
 }))
