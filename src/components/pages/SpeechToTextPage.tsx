@@ -13,20 +13,29 @@ import AudioPlayer from '../common/AudioPlayer';
 import RowsTable from '../common/Rows';
 import { handleDownload } from '../../utils/downloadUrl';
 import { handleCopy } from '../../utils/copyText';
+import { timeToSec, emitHourMili } from '../../utils/formatTime';
 
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments, tryAgain}) => {
   const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const activeIndex = useMemo(() => {
+    return segments.findIndex(
+      segment => currentTime >= timeToSec(emitHourMili(segment.start)) && currentTime <= timeToSec(emitHourMili(segment.end))
+    );
+  }, [currentTime, segments]);
   return (
     <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} onTryAgain={() => {tryAgain!()}} headerClass="w-[94%] mt-2"
     onDownload={() => {handleDownload(audioSrc)}} onCopy={() => {handleCopy(fullText); showToast("text copied!")}}>
       <TabsWithMenu.Tab title="متن ساده" icon="text">
-        <p className="font-light">{fullText}</p>
+        <p className="font-light">{segments.map((segment, segmentIdx) => (
+          <span key={`segment${segmentIdx}`} className={segmentIdx === activeIndex ? `text-${theme} font-bold` : ""}>{segment["text"]} </span>
+        ))}</p>
         <div className="absolute bottom-0 w-[94%] mb-5">
-          <AudioPlayer src={audioSrc} theme={theme} />
+          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
         </div>
       </TabsWithMenu.Tab>
       <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
-        <RowsTable texts={segments} />
+        <RowsTable texts={segments} activeIndex={activeIndex} theme={theme} />
         <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
           <AudioPlayer src={audioSrc} theme={theme} />
         </div>

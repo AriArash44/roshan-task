@@ -9,6 +9,11 @@ export function secToTime(sec: number): string {
   return `${pad(minutes)}:${pad(seconds)}`;
 }
 
+export function timeToSec(time: string): number {
+  const [min, sec] = time.split(":");
+  return parseInt(min) * 60 + parseInt(sec);
+}
+
 export function emitHourMili(time: string): string {
   const parts = time.split(":");
   const minute = parseInt(parts[1]);

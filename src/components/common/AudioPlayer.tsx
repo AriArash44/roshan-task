@@ -5,7 +5,7 @@ import RangeSlider from "./RangeSlider";
 import type { AudioPlayerProps } from "../../consts/types";
 import { secToTime } from "../../utils/formatTime";
 
-const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
+const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme, onTimeUpd }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -28,6 +28,7 @@ const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
   const onSeek = ([newTime]: number[]) => {
     if (audioRef.current) audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
+    onTimeUpd?.(newTime);
   };
 
   const onVolumeChange = ([newVol]: number[]) => {
@@ -39,7 +40,11 @@ const AudioPlayer: FC<AudioPlayerProps> = ({ src, theme }) => {
     const audio = audioRef.current;
     if (!audio) return;
     const onLoaded = () => setDuration(audio.duration);
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onTimeUpdate = () => {
+      const t = audio.currentTime;
+      setCurrentTime(t);
+      onTimeUpd?.(t);
+    };
     const onEnded = () => setIsPlaying(false);
     audio.addEventListener("loadedmetadata", onLoaded);
     audio.addEventListener("timeupdate", onTimeUpdate);

@@ -12,6 +12,7 @@ import { handleDownload } from "../../utils/downloadUrl";
 import handleWord from "../../utils/createWord";
 import Tooltip from "./Tooltip";
 import getFileSize from "../../utils/getFileSize";
+import { emitHourMili, timeToSec } from "../../utils/formatTime";
 
 function pickIcon(type: string, hovered: { id: number; type: string } | null, rowId: number) {
   const isHovering = hovered?.id === rowId && hovered?.type === type;
@@ -29,19 +30,26 @@ function pickIcon(type: string, hovered: { id: number; type: string } | null, ro
 }
 
 const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments }) => {
-  const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const activeIndex = useMemo(() => {
+    return segments.findIndex(
+      segment => currentTime >= timeToSec(emitHourMili(segment.start)) && currentTime <= timeToSec(emitHourMili(segment.end))
+    );
+  }, [currentTime, segments]);
   return (
     <TabsWithMenu defaultIndex={0} hasDownload={false} hasCopy={false} hasTryAgain={false} theme={theme} headerClass="w-full" contentClass='pl-10'>
       <TabsWithMenu.Tab title="متن ساده" icon="text">
-        <p className="font-light">{fullText}</p>
+        <p className="font-light">{segments.map((segment, segmentIdx) => (
+          <span key={`segment${segmentIdx}`} className={segmentIdx === activeIndex ? `text-${theme} font-bold` : ""}>{segment["text"]} </span>
+        ))}</p>
         <div className="absolute bottom-0 w-full mb-5">
-          <AudioPlayer src={audioSrc} theme={theme} />
+          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
         </div>
       </TabsWithMenu.Tab>
       <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
-        <RowsTable texts={segments} />
+        <RowsTable texts={segments} activeIndex={activeIndex} theme={theme} />
         <div className="absolute bottom-0 w-full pb-5 rounded-b-xl pt-2 bg-neutral-white">
-          <AudioPlayer src={audioSrc} theme={theme} />
+          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
         </div>
       </TabsWithMenu.Tab>
     </TabsWithMenu>
@@ -103,7 +111,7 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
               }}>
                 {hasIcon && (
                   <div role="cell" className="w-[6%] flex">
-                    <img src={getWhiteIconPath(row.stableIcon)} alt={row["icon"]} className={`p-2 w-8 h-8 rounded-full
+                    <img src={getWhiteIconPath(row.stableIcon)} alt={row["icon"] ?? "randomIcon"} className={`p-2 w-8 h-8 rounded-full
                     ${row.stableIcon === "mic" ? "bg-green-500" : row.stableIcon === "upload" ? "bg-blue-500" : "bg-red-500" }`} />
                   </div>
                 )}
@@ -146,7 +154,7 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
               {openIndex === rowIdx && (
                 <div className="relative h-100 mr-10">
                   <TranscriptionTabs audioSrc={row["url"]} segments={row["segments"]}
-                    theme={row["icon"] === "mic" ? "green" : row["icon"] === "upload" ? "blue" : "red"} />
+                    theme={row.stableIcon === "mic" ? "green" : row.stableIcon === "upload" ? "blue" : "red"} />
                 </div>
               )}
             </div>

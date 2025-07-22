@@ -23,6 +23,7 @@ export interface AsideProps {
 export interface AudioPlayerProps {
   src: string;
   theme: themeColor;
+  onTimeUpd?: (current: number) => void;
 }
 
 export interface CompoundChildProps {
@@ -82,6 +83,8 @@ export interface RowProps {
 
 export interface RowsProps {
   texts: RowProps[];
+  activeIndex?: number;
+  theme?: themeColor;
 }
 
 export interface Segment {
