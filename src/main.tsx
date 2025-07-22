@@ -1,6 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
+import { store } from "./store"
+import { Provider } from "react-redux";
 
 if (import.meta.env.VITE_USE_MOCK === 'true') {
   const { worker } = await import('./mocks/server.ts');
@@ -9,6 +11,8 @@ if (import.meta.env.VITE_USE_MOCK === 'true') {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>,
 )

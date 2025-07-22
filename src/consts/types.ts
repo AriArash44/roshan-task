@@ -1,5 +1,13 @@
 import type {ReactNode, ReactElement} from 'react';
 
+export type ApiState = Record<string, ApiStateItem<unknown>>;
+
+export type ApiStateItem<R> = {
+  loading: boolean;
+  error: string | null;
+  data: R | null;
+};
+
 export interface ArchiveItem {
   id: number;
   url: string;

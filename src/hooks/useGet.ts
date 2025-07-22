@@ -1,39 +1,26 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchData, reset, selectApiState } from "../store/slices/apiSlice";
 import type { UseGetOptions, UseGetReturn } from "../consts/types";
+import type { AppDispatch, RootState } from "../store/index";
 
 export function useGet<R = unknown>(options: UseGetOptions): UseGetReturn<R> {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<R | null>(null);
-  const mockEnable = useMemo(() => import.meta.env.VITE_USE_MOCK === "true", []);
-
-  const getData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    setData(null);
-    try {
-      const base = mockEnable ? import.meta.env.VITE_MOCK_URL : import.meta.env.VITE_BASE_URL;
-      const res = await fetch(base.concat(options.url), {
-        method: "GET",
-        headers: {
-          ...(options.headers || {}),
-        },
-      });
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-      const json = await res.json();
-      setData(json as R);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error, data } = useSelector((state: RootState) =>
+    selectApiState(state, options.url) as {
+      loading: boolean;
+      error: string | null;
+      data: R | null;
     }
-  }, [options]);
+  );
 
-  const reset = () => {
-    setLoading(false);
-    setError(null);
-    setData(null);
-  };
+  const getData = useCallback(async (): Promise<void> => {
+    await dispatch(fetchData(options));
+  }, [dispatch, options]);
 
-  return { loading, error, data, getData, reset };
+  const resetData = useCallback(() => {
+    dispatch(reset(options.url));
+  }, [dispatch, options.url]);
+
+  return { loading, error, data, getData, reset: resetData };
 }
