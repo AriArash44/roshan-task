@@ -6,19 +6,14 @@ const Aside = ({ pages }: AsideProps) => {
   const { pathname } = useLocation();
   const [heightRatio, setHeightRatio] = useState(1);
   useEffect(() => {
-    const checkHeight = () => {
-      const documentHeight = document.body.scrollHeight;
-      const screenHeight = window.innerHeight;
-      setHeightRatio(documentHeight / screenHeight);
-    };
-    checkHeight();
-    const observer = new MutationObserver(checkHeight);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
+    const ro = new ResizeObserver(() => {
+      const docH = document.body.scrollHeight;
+      const winH = window.innerHeight;
+      setHeightRatio(docH / winH);
     });
-    return () => observer.disconnect();
+
+    ro.observe(document.body);
+    return () => ro.disconnect();
   }, []);
   return (
     <aside className="relative w-43 min-h-screen overflow-hidden">
@@ -27,7 +22,7 @@ const Aside = ({ pages }: AsideProps) => {
         alt=""
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       />
-      <div className="absolute inset-0 top-[8%] mr-[18%]">
+      <div className={`absolute inset-0 top-[8%] mr-[${Math.floor((heightRatio - 1) * 15) + 18}%]`}>
         <span className="flex items-center gap-1.5 ">
           <img src="/images/icons/three-lines.svg" alt="Ava" className="h-8 mr-2 w-[15%]" />
           <span className=" text-[clamp(0.7rem,2.8vw,1rem)] font-bold text-white pl-2">آوا</span>

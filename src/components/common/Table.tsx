@@ -120,12 +120,16 @@ const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, h
                   </div>)}
                 </div>
               </div>
-              {openIndex === rowIdx && (
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  openIndex === rowIdx ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
                 <div className="relative h-100 mr-10">
                   <TranscriptionTabs audioSrc={row["url"]} segments={row["segments"]}
                     theme={row.stableIcon === "mic" ? "green" : row.stableIcon === "upload" ? "blue" : "red"} />
                 </div>
-              )}
+              </div>
             </div>
           )}
         )}
