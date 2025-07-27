@@ -105,7 +105,8 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای بارگذاری فایل گفتاری (صوتی/تصویری)، دکمه را فشار دهید<br/>متن پیاده شده آن، در اینجا ظاهر می شود</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="blue" audioSrc={fileUrl!} segments={data[0].segments} tryAgain={resetTabs} />
+                  <TranscriptionTabs theme="blue" audioSrc={fileUrl!} segments={data[0].segments} hasTryAgain={true} 
+                  tryAgain={resetTabs} hasCopy={true} hasDownload={true} width='[94%]' />
                 )
               ) : (
                 <span className="loader"></span>
@@ -126,7 +127,8 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">نشانی اینترنتی فایل حاوی گفتار (صوتی/تصویری) را وارد<br />و دکمه را فشار دهید</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="red" audioSrc={directUrlAudio!} segments={data[0].segments} tryAgain={resetTabs}/>
+                  <TranscriptionTabs theme="red" audioSrc={directUrlAudio!} segments={data[0].segments} hasTryAgain={true} 
+                  tryAgain={resetTabs} hasCopy={true} hasDownload={true} width='[94%]'/>
                 )
               ) : (
                 <span className="loader"></span>
