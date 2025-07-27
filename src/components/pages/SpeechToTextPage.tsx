@@ -170,7 +170,7 @@ const SpeechToTextPage = () => {
         </Tabs>
         <div className="flex gap-4 items-center absolute mt-3 left-0">
           <p className="font-light text-neutral-200">زبان گفتار:</p>
-          <DropdownMenu title="فارسی" options={[{ label: 'انگلیسی' }]} changeTitleOnSelect={true} swapLabelsOnSelect={true} 
+          <DropdownMenu id="lang-dropdown" title="فارسی" options={[{ label: 'انگلیسی' }]} changeTitleOnSelect={true} swapLabelsOnSelect={true} 
           className="pt-1.5 pb-1.5" onSelect={(lang) => setSelectedLang(lang === "فارسی" ? "fa" : "en")}/>
         </div><br /> <br />
       </MainLayout.Main>

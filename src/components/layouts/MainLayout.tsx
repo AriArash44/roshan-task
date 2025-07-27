@@ -28,7 +28,7 @@ const MainLayout: MainLayoutComponent = ({ children }) => {
   });
   return (
     <>
-      <DropdownMenu iconName="user" title="مهمان" options={[{label: "خروج", iconName: "logout"}]}
+      <DropdownMenu id="menu-dropdown" iconName="user" title="مهمان" options={[{label: "خروج", iconName: "logout"}]}
       changeTitleOnSelect={false} className="absolute top-8 left-8 border-2"/>
       <Aside pages={pages} />
       <div className="flex flex-col flex-1 gap-8 justify-center items-center pl-[4rem] py-10">
