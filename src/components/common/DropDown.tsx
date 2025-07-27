@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { getIconPath } from "../../utils/getIconPath";
 import type { DropdownOption, DropdownMenuProps } from "../../consts/types";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [], 
     changeTitleOnSelect = false, swapLabelsOnSelect = false, className = "", onSelect }) => {
@@ -23,14 +24,20 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [
     onSelect?.(opt.label);
     setOpen(false);
   }
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  useOutsideClick(dropdownRef, () => setOpen(false));
   return (
-    <div className={`px-5 py-2.5 border border-green rounded-3xl ${className}`}>
+    <div className={`px-5 py-2.5 border border-green rounded-3xl ${className}`} ref={dropdownRef}>
       <button className="flex items-center gap-1 cursor-pointer" onClick={() => setOpen((o) => !o)}>
         {iconName && <img src={getIconPath(iconName)} alt={iconName} />}
         <span className="text-green">{currentTitle}</span>
         <img src={getIconPath(open ? "lift" : "drop")} alt="toggle" className="mr-2" />
       </button>
-      {open && optionsState.length > 0 && (
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          open ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
         <ul>
           {optionsState.map((opt, idx) => (
             <li key={idx} className="border-t-1 border-green mt-2 pt-2">
@@ -41,7 +48,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({iconName, title, options = [
             </li>
           ))}
         </ul>
-      )}
+      </div>
     </div>
   );
 };
