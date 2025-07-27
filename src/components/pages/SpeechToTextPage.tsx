@@ -1,48 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { FC } from 'react';
 import MainLayout from "../layouts/MainLayout";
 import Tabs from "../common/Tabs";
-import TabsWithMenu from '../common/TabsWithMenu';
 import DropdownMenu from "../common/DropDown";
 import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 import { usePost } from "../../hooks/usePost";
 import { useBytescaleUploader } from '../../hooks/useBytescaleUploader';
-import type { TranscriptionOutput, TranscriptionTabsProps, MediaInput } from "../../consts/types";
+import type { TranscriptionOutput, MediaInput } from "../../consts/types";
 import { showToast } from '../../utils/showToastHandler';
-import AudioPlayer from '../common/AudioPlayer';
-import RowsTable from '../common/Rows';
-import { handleDownload } from '../../utils/downloadUrl';
-import { handleCopy } from '../../utils/copyText';
-import { timeToSec, emitHourMili } from '../../utils/formatTime';
-
-const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments, tryAgain}) => {
-  const fullText = useMemo(() => segments.map((s) => s.text).join(" "),[segments]);
-  const [currentTime, setCurrentTime] = useState(0);
-  const activeIndex = useMemo(() => {
-    return segments.findIndex(
-      segment => currentTime >= timeToSec(emitHourMili(segment.start)) && currentTime <= timeToSec(emitHourMili(segment.end))
-    );
-  }, [currentTime, segments]);
-  return (
-    <TabsWithMenu defaultIndex={0} hasDownload hasCopy hasTryAgain theme={theme} onTryAgain={() => {tryAgain!()}} headerClass="w-[94%] mt-2"
-    onDownload={() => {handleDownload(audioSrc)}} onCopy={() => {handleCopy(fullText); showToast("text copied!")}}>
-      <TabsWithMenu.Tab title="متن ساده" icon="text">
-        <p className="font-light">{segments.map((segment, segmentIdx) => (
-          <span key={`segment${segmentIdx}`} className={segmentIdx === activeIndex ? `text-${theme} font-bold` : ""}>{segment["text"]} </span>
-        ))}</p>
-        <div className="absolute bottom-0 w-[94%] mb-5">
-          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
-        </div>
-      </TabsWithMenu.Tab>
-      <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
-        <RowsTable texts={segments} activeIndex={activeIndex} theme={theme} />
-        <div className="absolute bottom-0 w-[94%] mb-5 pt-2 bg-neutral-white">
-          <AudioPlayer src={audioSrc} theme={theme} />
-        </div>
-      </TabsWithMenu.Tab>
-    </TabsWithMenu>
-  );
-};
+import TranscriptionTabs from '../common/TranscriptionTab';
 
 const SpeechToTextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -120,7 +85,8 @@ const SpeechToTextPage = () => {
                     <p className="text-neutral-200 font-light text-center mt-2">برای شروع به صحبت، دکمه را فشار دهید<br />متن پیاده شده آن، در اینجا ظاهر شود</p>
                   </>
                 ) : (
-                  <TranscriptionTabs theme="green" audioSrc={fileUrl!} segments={data[0].segments} tryAgain={resetTabs}/>
+                  <TranscriptionTabs theme="green" audioSrc={fileUrl!} segments={data[0].segments} hasTryAgain={true} 
+                  tryAgain={resetTabs} hasCopy={true} hasDownload={true} width='[94%]'/>
                 )
               ) : (
                 <span className="loader"></span>

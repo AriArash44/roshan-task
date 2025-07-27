@@ -165,6 +165,10 @@ export interface TranscriptionTabsProps {
   audioSrc: string;
   segments: Segment[];
   tryAgain?: () => void;
+  hasCopy?: boolean;
+  hasDownload?: boolean;
+  hasTryAgain?: boolean;
+  width?: string;
 }
 
 export type UseAudioRecorderReturn = {

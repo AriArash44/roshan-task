@@ -1,18 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
-import type { TableProps, TranscriptionTabsProps, Segment } from "../../consts/types";
+import type { TableProps, Segment } from "../../consts/types";
 import { getWhiteIconPath, getIconPath, getGreenIconPath } from "../../utils/getIconPath";
 import { persianNumberColumns, wideColumns } from "../../consts/tableColumns";
-import TabsWithMenu from "../common/TabsWithMenu";
-import AudioPlayer from "../common/AudioPlayer";
-import RowsTable from '../common/Rows';
-import type { FC } from "react";
 import { handleCopy } from "../../utils/copyText";
 import { showToast } from "../../utils/showToastHandler";
 import { handleDownload } from "../../utils/downloadUrl";
 import handleWord from "../../utils/createWord";
 import Tooltip from "./Tooltip";
 import getFileSize from "../../utils/getFileSize";
-import { emitHourMili, timeToSec } from "../../utils/formatTime";
+import TranscriptionTabs from "./TranscriptionTab";
 
 function pickIcon(type: string, hovered: { id: number; type: string } | null, rowId: number) {
   const isHovering = hovered?.id === rowId && hovered?.type === type;
@@ -28,33 +24,6 @@ function pickIcon(type: string, hovered: { id: number; type: string } | null, ro
     return getIconPath(type);
   }
 }
-
-const TranscriptionTabs: FC<TranscriptionTabsProps> = ({ theme, audioSrc, segments }) => {
-  const [currentTime, setCurrentTime] = useState(0);
-  const activeIndex = useMemo(() => {
-    return segments.findIndex(
-      segment => currentTime >= timeToSec(emitHourMili(segment.start)) && currentTime <= timeToSec(emitHourMili(segment.end))
-    );
-  }, [currentTime, segments]);
-  return (
-    <TabsWithMenu defaultIndex={0} hasDownload={false} hasCopy={false} hasTryAgain={false} theme={theme} headerClass="w-full" contentClass='pl-10'>
-      <TabsWithMenu.Tab title="متن ساده" icon="text">
-        <p className="font-light">{segments.map((segment, segmentIdx) => (
-          <span key={`segment${segmentIdx}`} className={segmentIdx === activeIndex ? `text-${theme} font-bold` : ""}>{segment["text"]} </span>
-        ))}</p>
-        <div className="absolute bottom-0 w-full mb-5">
-          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
-        </div>
-      </TabsWithMenu.Tab>
-      <TabsWithMenu.Tab title="متن زمان‌بندی شده" icon="time">
-        <RowsTable texts={segments} activeIndex={activeIndex} theme={theme} />
-        <div className="absolute bottom-0 w-full pb-5 rounded-b-xl pt-2 bg-neutral-white">
-          <AudioPlayer src={audioSrc} theme={theme} onTimeUpd={setCurrentTime}/>
-        </div>
-      </TabsWithMenu.Tab>
-    </TabsWithMenu>
-  );
-};
 
 const Table = <T extends Record<string, any>>({data, columns, hasIcon = false, hasDownload = false,
   hasWord = false, hasCopy = false, hasDelete = false, hasOpen = false, onDelete}: TableProps<T>) => {
